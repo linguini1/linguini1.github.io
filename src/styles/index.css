@@ -1,0 +1,9 @@
+/* Style my profile picture to match the site theme */
+
+#pulsar {
+    width: 5rem;
+}
+
+.pulsar {
+    color: var(--fg);
+}

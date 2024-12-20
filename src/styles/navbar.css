@@ -1,0 +1,59 @@
+/* Navbar container styles */
+
+#navbar {
+    border-style: solid;
+    border-width: 3px 0;
+    border-color: var(--fg);
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 4rem;
+    margin-bottom: 2rem;
+}
+
+/* Sub-container spacings */
+
+#navbar-pages,
+#navbar-socials {
+    display: flex;
+    gap: 2rem;
+    justify-content: left;
+}
+
+/* Text operations on the page titles */
+
+#navbar-pages a {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+/* Style like a button */
+
+#navbar a {
+    border-style: solid;
+    border-width: 3px;
+    border-color: var(--fg);
+    padding: 0.3rem;
+}
+
+/* Raise animation */
+
+#navbar a:hover {
+    --button-distance: 5px;
+    transform: translateY(calc(-1 * var(--button-distance)));
+    box-shadow: 0px var(--button-distance) var(--fg);
+
+    --anim-duration: 0.05s;
+    transition:
+        box-shadow linear var(--anim-duration),
+        -webkit-transform linear var(--anim-duration);
+    transition:
+        transform linear var(--anim-duration),
+        box-shadow linear var(--anim-duration);
+    transition:
+        transform linear var(--anim-duration),
+        box-shadow linear var(--anim-duration),
+        -webkit-transform linear var(--anim-duration);
+}
