@@ -219,7 +219,7 @@ function create_title() {
     return title;
 }
 
-window.onload = () => {
+window.addEventListener("load", () => {
     /* Load the last theme properly */
     let theme = get_theme();
     const darkmode = get_dark_mode();
@@ -237,4 +237,4 @@ window.onload = () => {
     /* Toggle the slider according to dark mode */
     let ball = document.getElementById("navbar-toggle-ball");
     ball.className = darkmode ? "" : "toggled";
-};
+});
