@@ -101,9 +101,9 @@ const THEMES = [
 /* Navigable pages */
 
 const PAGES = [
-    { name: "Home", file: "index.html" },
-    { name: "About", file: "about.html" },
-    { name: "Blog", file: "blog.html" },
+    { name: "Home", file: "/" },
+    { name: "About", file: "/src/pages/about.html" },
+    { name: "Blog", file: "/src/pages/blog.html" },
 ];
 
 const SOCIALS = [
@@ -132,7 +132,7 @@ function create_pages() {
     let pages = document.createElement("div");
     pages.id = "navbar-pages";
     for (let i = 0; i < PAGES.length; i++) {
-        pages.appendChild(create_page_link(PAGES[i].name, `/src/pages/${PAGES[i].file}`));
+        pages.appendChild(create_page_link(PAGES[i].name, PAGES[i].file));
     }
     return pages;
 }
