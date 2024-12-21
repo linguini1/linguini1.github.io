@@ -20,7 +20,7 @@ jobs:
 
     - name: Add articles
       run:  |
-        pip install bs4;
+        pip install -r requirements.txt;
         python3 scripts/update_articles.py src/blog src/pages/blog.html
 
     - name: Commit GitHub Pages
