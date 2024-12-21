@@ -79,25 +79,24 @@ def main() -> None:
     blog_posts: list[BlogPost] = [BlogPost.from_path(p) for p in post_paths]
 
     # Add the posts to the RSS feed
-    with open("rss.xml", "w") as file:
-        file.write(
-            BeautifulSoup(
-                """
+    rss_feed = BeautifulSoup(
+        """
     <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
        <title>Matteo Golin's Blog</title>
        <description>Matteo Golin's Blog</description>
        <link>https://linguini1.github.io/</link>
     </channel>
-        """,
-                "xml",
-            ).prettify()
-        )
+    </rss>""",
+        "xml",
+    )
+    rss_tag = rss_feed.select_one("rss")
 
-        for post in blog_posts:
-            file.write(post.to_rss() + "\n")
+    for post in blog_posts:
+        rss_tag.append(BeautifulSoup(post.to_rss(), "xml")) # type:ignore
 
-        file.write("</rss>")  # Close the RSS feed
+    with open("rss.xml", "w") as file:
+        file.write(rss_feed.prettify())
 
     # Add the posts to the blog page
 
