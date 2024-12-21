@@ -12,8 +12,6 @@ jobs:
         
     - name: Checkout source files
       uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
 
     - name: Show files
       run:  set ; pwd ; ls -l
@@ -24,6 +22,8 @@ jobs:
         python3 scripts/update_articles.py src/blog src/pages/blog.html
 
     - name: Commit GitHub Pages
-      uses: EndBug/add-and-commit@v4.4.0
+      uses: EndBug/add-and-commit@v9
       with:
         add: .
+        committer_name: GitHub Actions
+        committer_email: actions@github.com
