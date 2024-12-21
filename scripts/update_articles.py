@@ -46,7 +46,7 @@ class BlogPost:
 
         rss = f"<item>\n\t<title>{self.title}</title>\n\t<link>https://linguini1.github.io/{self.path}</link>"
         rss += f"\n\t<description>{self.description}</description>\n\t<pubDate>{pub_date}</pubDate>\n</item>"
-        return BeautifulSoup(rss, "lxml").prettify()
+        return BeautifulSoup(rss, "xml").prettify()
 
     def to_html(self) -> str:
         """Turn the blog post into its HTML entry representation."""
@@ -83,7 +83,6 @@ def main() -> None:
         file.write(
             BeautifulSoup(
                 """
-    <?xml version="1.0" encoding="utf-8"?>
     <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
        <title>Matteo Golin's Blog</title>
@@ -91,7 +90,7 @@ def main() -> None:
        <link>https://linguini1.github.io/</link>
     </channel>
         """,
-                "lxml",
+                "xml",
             ).prettify()
         )
 
