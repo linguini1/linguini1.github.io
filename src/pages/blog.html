@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="/src/styles/global.css" />
     <link rel="stylesheet" href="/src/styles/navbar.css" />
     <link rel="stylesheet" href="/src/styles/blog.css" />
+    <link rel="alternate" type="application/rss+xml" title="Matteo's Blog" href="/rss.xml" />
     <link rel="icon" type="image/svg+xml" href="/src/assets/conwayPulsar.svg" />
     <script src="/src/scripts/navbar.js"></script>
-    <script src="/src/scripts/blog.js"></script>
 </head>
 
 <body>
@@ -24,7 +24,24 @@
                 below.
             </p>
         </div>
-        <div id="blog-posts"></div>
+        <div id="blog-posts">
+
+            <div class="blog-entry">
+                <div class="blog-entry-title-container">
+                    <a href="/src/blog/2024/12/21/some_blog_post.html">Test title 1</a>
+                    <p class="blog-entry-date">2024-12-01</p>
+                </div>
+                <p class="blog-entry-description">This is a test description.</p>
+            </div>
+            <div class="blog-entry">
+                <div class="blog-entry-title-container">
+                    <a href="/src/blog/2024/12/21/some_blog_post.html">Test title 2</a>
+                    <p class="blog-entry-date">2024-12-01</p>
+                </div>
+                <p class="blog-entry-description">This is a test description.</p>
+            </div>
+
+        </div>
     </main>
 </body>
 
