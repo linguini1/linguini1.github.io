@@ -47,7 +47,7 @@ class BlogPost:
         return f"""
         <item>
             <title>{self.title}</title>
-            <link>{self.path}</link>
+            <link>https://linguini1.github.io/{self.path}</link>
             <description>{self.description}</description>
             <pubDate>{pub_date}</pubDate>
         </item>
@@ -58,7 +58,7 @@ class BlogPost:
         return f"""
             <div class="blog-entry">
                 <div class="blog-entry-title-container">
-                    <a href="{self.path}">{self.title}</a>
+                    <a href="/{self.path}">{self.title}</a>
                     <p class="blog-entry-date">{self.date}</p>
                 </div>
                 <p class="blog-entry-description">{self.description}</p>

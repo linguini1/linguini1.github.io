@@ -9,7 +9,7 @@
         
         <item>
             <title>This is a blog post.</title>
-            <link>src/blog/2024/12/21/some_blog_post.html</link>
+            <link>https://linguini1.github.io/src/blog/2024/12/21/some_blog_post.html</link>
             <description>This is a some blog text. This paragrap...</description>
             <pubDate>Sat, 21 Dec 2024 00:00:00 </pubDate>
         </item>

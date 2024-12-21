@@ -1,0 +1,29 @@
+name: Blog Post Entries
+
+on:
+  push:
+    branches: [ main ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+        
+    - name: Checkout source files
+      uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+
+    - name: Show files
+      run:  set ; pwd ; ls -l
+
+    - name: Add articles
+      run:  |
+        pip install bs4;
+        python3 scripts/update_articles.py
+
+    - name: Commit GitHub Pages
+      uses: EndBug/add-and-commit@v4.4.0
+      with:
+        add: .
