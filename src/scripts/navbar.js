@@ -26,9 +26,42 @@ function create_socials() {
     return socials;
 }
 
+function swap_colour() {
+    let root = document.documentElement;
+    let styles = getComputedStyle(root);
+
+    /* Swap the CSS colours in the root element */
+    let bg = styles.getPropertyValue("--bg");
+    let fg = styles.getPropertyValue("--fg");
+    root.style.setProperty("--fg", bg);
+    root.style.setProperty("--bg", fg);
+
+    /* Toggle the slider back and forth */
+    let ball = document.getElementById("navbar-toggle-ball");
+    ball.className = ball.className ? "" : "toggled";
+}
+
+function create_toggle() {
+    let container = document.createElement("div");
+    container.id = "navbar-toggle";
+
+    let ball = document.createElement("div");
+    ball.id = "navbar-toggle-ball";
+    ball.className = "";
+    ball.onclick = swap_colour;
+
+    let socket = document.createElement("div");
+    socket.id = "navbar-toggle-socket";
+
+    container.appendChild(ball);
+    container.appendChild(socket);
+    return container;
+}
+
 function create_navbar() {
     let navbar = document.createElement("nav");
     navbar.id = "navbar";
+    navbar.appendChild(create_toggle());
     navbar.appendChild(create_pages(["Home", "About"]));
     navbar.appendChild(create_socials());
     return navbar;

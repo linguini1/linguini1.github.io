@@ -57,3 +57,43 @@
         box-shadow linear var(--anim-duration),
         -webkit-transform linear var(--anim-duration);
 }
+
+/* Dark mode toggle */
+
+#navbar-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    --ball-size: 1.1rem;
+    --socket-width: 2.5rem;
+    --socket-height: 1rem;
+}
+
+#navbar-toggle-socket {
+    width: var(--socket-width);
+    height: var(--socket-height);
+    margin-left: calc(var(--ball-size) / -2);
+
+    border-radius: 4rem;
+    background-color: var(--fg);
+}
+
+#navbar-toggle-ball {
+    background-color: var(--bg);
+    border-style: solid;
+    border-color: var(--fg);
+    border-radius: 100%;
+    cursor: pointer;
+
+    width: var(--ball-size);
+    height: var(--ball-size);
+    margin-right: calc(var(--ball-size) / -2);
+    z-index: 1;
+
+    transition: transform ease 0.5s;
+}
+
+.toggled {
+    transform: translateX(calc(var(--socket-width) - calc(var(--ball-size) / 2)));
+}
