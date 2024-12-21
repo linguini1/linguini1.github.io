@@ -11,21 +11,18 @@
    https://linguini1.github.io/
   </link>
  </channel>
-</rss>
-<?xml version="1.0" encoding="utf-8"?>
-<item>
- <title>
-  This is a blog post. TESTING
- </title>
- <link>
-  https://linguini1.github.io/src/blog/2024/12/21/some_blog_post.html
- </link>
- <description>
-  This is a some blog text. This paragrap...
- </description>
- <pubDate>
-  Sat, 21 Dec 2024 00:00:00
- </pubDate>
-</item>
-
+ <item>
+  <title>
+   This is a blog post. TESTING
+  </title>
+  <link>
+   https://linguini1.github.io/src/blog/2024/12/21/some_blog_post.html
+  </link>
+  <description>
+   This is a some blog text. This paragrap...
+  </description>
+  <pubDate>
+   Sat, 21 Dec 2024 00:00:00
+  </pubDate>
+ </item>
 </rss>
