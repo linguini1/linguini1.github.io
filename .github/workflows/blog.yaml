@@ -21,7 +21,7 @@ jobs:
     - name: Add articles
       run:  |
         pip install bs4;
-        python3 scripts/update_articles.py
+        python3 scripts/update_articles.py src/blog src/pages/blog.html
 
     - name: Commit GitHub Pages
       uses: EndBug/add-and-commit@v4.4.0
