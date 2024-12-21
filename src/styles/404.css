@@ -1,0 +1,17 @@
+#pulsar {
+    width: 40%;
+    justify-self: center;
+}
+
+main {
+    text-align: center;
+}
+
+main h1 {
+    font-size: 3rem;
+}
+
+#four-oh-four {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+}

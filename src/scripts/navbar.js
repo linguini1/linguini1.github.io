@@ -103,6 +103,7 @@ const THEMES = [
 const PAGES = [
     { name: "Home", file: "index.html" },
     { name: "About", file: "about.html" },
+    { name: "Blog", file: "blog.html" },
 ];
 
 /* Create header elements */
