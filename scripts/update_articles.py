@@ -44,14 +44,9 @@ class BlogPost:
         ctime = date_and_time.ctime()
         pub_date = f"{ctime[0:3]}, {date_and_time.day:02d} {ctime[4:7]} " + date_and_time.strftime("%Y %H:%M:%S %z")
 
-        return f"""
-        <item>
-            <title>{self.title}</title>
-            <link>https://linguini1.github.io/{self.path}</link>
-            <description>{self.description}</description>
-            <pubDate>{pub_date}</pubDate>
-        </item>
-        """
+        rss = f"<item>\n\t<title>{self.title}</title>\n\t<link>https://linguini1.github.io/{self.path}</link>"
+        rss += f"\n\t<description>{self.description}</description>\n\t<pubDate>{pub_date}</pubDate>\n</item>"
+        return BeautifulSoup(rss, "lxml").prettify()
 
     def to_html(self) -> str:
         """Turn the blog post into its HTML entry representation."""
@@ -86,15 +81,18 @@ def main() -> None:
     # Add the posts to the RSS feed
     with open("rss.xml", "w") as file:
         file.write(
-            """
-        <?xml version="1.0" encoding="utf-8"?>
-        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-        <channel>
-           <title>Matteo Golin's Blog</title>
-           <description>Matteo Golin's Blog</description>
-           <link>https://linguini1.github.io/</link>
-        </channel>
-        """
+            BeautifulSoup(
+                """
+    <?xml version="1.0" encoding="utf-8"?>
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+       <title>Matteo Golin's Blog</title>
+       <description>Matteo Golin's Blog</description>
+       <link>https://linguini1.github.io/</link>
+    </channel>
+        """,
+                "lxml",
+            ).prettify()
         )
 
         for post in blog_posts:
