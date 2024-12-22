@@ -93,7 +93,7 @@ def main() -> None:
     rss_tag = rss_feed.select_one("rss")
 
     for post in blog_posts:
-        rss_tag.append(BeautifulSoup(post.to_rss(), "xml")) # type:ignore
+        rss_tag.append(BeautifulSoup(post.to_rss(), "xml"))  # type:ignore
 
     with open("rss.xml", "w") as file:
         file.write(rss_feed.prettify())

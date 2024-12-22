@@ -6,7 +6,8 @@
 }
 
 html,
-body {
+body,
+button {
     font-family: "Montserrat";
     background-color: var(--bg);
     color: var(--fg);

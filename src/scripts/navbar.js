@@ -125,6 +125,7 @@ function create_page_link(page, url) {
     let link = document.createElement("a");
     link.href = url;
     link.innerText = page;
+    link.className = "raise-button";
     return link;
 }
 
@@ -146,6 +147,7 @@ function create_socials() {
         let link = document.createElement("a");
         link.href = SOCIALS[i].url;
         link.innerHTML = SOCIALS[i].svg;
+        link.className = "raise-button";
         socials.appendChild(link);
     }
 
@@ -233,6 +235,41 @@ function create_navbar() {
     return navbar;
 }
 
+function create_theme_menu() {
+    let modal = document.createElement("div");
+    modal.id = "theme-menu";
+    modal.style.display = "none";
+
+    let container = document.createElement("div");
+    container.id = "theme-menu-container";
+    modal.appendChild(container);
+
+    let menu_title = document.createElement("h1");
+    menu_title.textContent = "Pick a theme";
+    container.appendChild(menu_title);
+
+    let menu = document.createElement("div");
+    menu.id = "theme-menu-content";
+    container.appendChild(menu);
+
+    for (let i = 0; i < THEMES.length; i++) {
+        let item = document.createElement("button");
+        item.className = "raise-button";
+        item.textContent = THEMES[i].name;
+        item.onclick = () => {
+            set_theme(THEMES[i]);
+            if (get_dark_mode()) {
+                set_colours(THEMES[i].dark, THEMES[i].light);
+            } else {
+                set_colours(THEMES[i].light, THEMES[i].dark);
+            }
+        };
+        menu.appendChild(item);
+    }
+
+    return modal;
+}
+
 function create_title() {
     let title = document.createElement("h1");
     title.textContent = "Matteo Golin";
@@ -258,4 +295,17 @@ window.addEventListener("load", () => {
     /* Toggle the slider according to dark mode */
     let ball = document.getElementById("navbar-toggle-ball");
     ball.className = darkmode ? "" : "toggled";
+
+    /* Add invisible modal */
+    let menu = create_theme_menu();
+    body.prepend(menu);
+});
+
+document.addEventListener("keypress", (e) => {
+    e = e || window.event;
+    if (e.key == "M") {
+        /* Toggle menu visibility */
+        let menu = document.getElementById("theme-menu");
+        menu.style.display = menu.style.display === "none" ? "flex" : "none";
+    }
 });
