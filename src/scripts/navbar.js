@@ -307,5 +307,8 @@ document.addEventListener("keypress", (e) => {
         /* Toggle menu visibility */
         let menu = document.getElementById("theme-menu");
         menu.style.display = menu.style.display === "none" ? "flex" : "none";
+    } else if (e.key == "D") {
+        /* Toggle dark mode */
+        swap_colour();
     }
 });
