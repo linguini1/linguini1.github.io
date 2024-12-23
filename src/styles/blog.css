@@ -35,9 +35,3 @@
     align-self: flex-end;
     font-weight: 300;
 }
-
-/* Blog post description */
-
-.blog-entry-description {
-    font-size: 1.2rem;
-}
