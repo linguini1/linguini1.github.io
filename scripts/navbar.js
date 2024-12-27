@@ -102,8 +102,8 @@ const THEMES = [
 
 const PAGES = [
     { name: "Home", file: "/" },
-    { name: "About", file: "about.html" },
-    { name: "Blog", file: "blog.html" },
+    { name: "About", file: "/about.html" },
+    { name: "Blog", file: "/blog.html" },
 ];
 
 const SOCIALS = [
