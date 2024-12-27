@@ -19,7 +19,7 @@
    https://linguini1.github.io/blog/2024/12/25/nuttx-bcm2711.html
   </link>
   <description>
-   When I was getting into RTOSs, the first RTOS ...
+   When I was getting into RTOSs, the first RTOS I experimented with was Blackberry's QNX. It's a microkernel...
   </description>
   <pubDate>
    Wed, 25 Dec 2024 00:00:00
@@ -33,7 +33,8 @@
    https://linguini1.github.io/blog/2024/12/21/the_first_post.html
   </link>
   <description>
-   I've finally gotten around to turning my websi...
+   I've finally gotten around to turning my website into a completely static site that just uses vanilla
+    ...
   </description>
   <pubDate>
    Sat, 21 Dec 2024 00:00:00
