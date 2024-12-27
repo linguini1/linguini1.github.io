@@ -23,7 +23,7 @@ a {
 }
 
 a:hover {
-    font-weight: 500;
+    text-shadow: 0px 0px 1px var(--fg);
 }
 
 p,
@@ -71,10 +71,9 @@ h3 {
 
 code {
     font-family: "Jetbrains Mono";
-    border-style: solid;
+    font-weight: 300;
     border-width: 1px;
-    border-radius: 10px;
-    font-weight: 200;
+    border-style: solid;
 }
 
 /* Code snippet blocks */
