@@ -1,3 +1,13 @@
+/* Blog posts */
+
+#blog-posts {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: left;
+    justify-content: left;
+    gap: 2rem;
+}
+
 /* Blog entry container */
 
 .blog-entry {
@@ -10,7 +20,6 @@
 /* Blog post entry container for title and date */
 
 .blog-entry-title-container {
-    display: flex;
     justify-content: left;
 }
 
@@ -21,7 +30,7 @@
     text-decoration: none;
     text-transform: uppercase;
     font-weight: 600;
-    margin: 0;
+    margin: 0 0 0 0;
 }
 
 .blog-entry a:hover {
@@ -32,7 +41,8 @@
 
 .blog-entry-date {
     font-size: 1.2rem;
-    margin: 0 0 0 1rem;
     align-self: flex-end;
     font-weight: 300;
+    margin: 0;
+    margin-top: 0.5rem;
 }

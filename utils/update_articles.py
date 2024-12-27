@@ -5,7 +5,7 @@ import datetime as dt
 from bs4 import BeautifulSoup
 import sys
 
-MAX_DESCRIPTION_LEN: int = 50
+MAX_DESCRIPTION_LEN: int = 60
 
 
 @dataclass
