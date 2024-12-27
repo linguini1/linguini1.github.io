@@ -8,6 +8,7 @@
 }
 
 /* Blog post entry container for title and date */
+
 .blog-entry-title-container {
     display: flex;
     justify-content: left;

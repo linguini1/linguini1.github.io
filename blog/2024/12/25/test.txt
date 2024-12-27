@@ -1,0 +1,8 @@
+Hello, world!
+arm64_oneshot_initialize: cycle_per_tick 54000
+arm64_fatal_error: reason = 0
+arm64_fatal_error: CurrentEL: MODE_EL1
+arm64_fatal_error: ESR_ELn: 0xbf000002
+arm64_fatal_error: FAR_ELn: 0x0
+arm64_fatal_error: ELR_ELn: 0x48a458
+print_ec_cause: SError interrupt

@@ -19,7 +19,7 @@ jobs:
     - name: Add articles
       run:  |
         pip install -r requirements.txt;
-        python3 scripts/update_articles.py src/blog src/pages/blog.html
+        python3 utils/update_articles.py blog blog.html
 
     - name: Commit GitHub Pages
       uses: EndBug/add-and-commit@v9

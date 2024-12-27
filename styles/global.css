@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+
+:root {
+    --bg: #222323;
+    --fg: #f0f6f0;
+}
+
+html,
+body,
+button {
+    font-family: "Montserrat";
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+body {
+    padding: 2rem 2em;
+}
+
+a {
+    color: var(--fg);
+}
+
+a:hover {
+    font-weight: 500;
+}
+
+p,
+a,
+ul,
+li,
+ol,
+span {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+li {
+    width: max-content;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2.3rem;
+}
+
+h3 {
+    font-size: 2rem;
+}
+
+h1,
+h2,
+h3 {
+    text-transform: uppercase;
+}
+
+/* Main site title */
+
+#site-title {
+    font-size: 4rem;
+    text-transform: uppercase;
+    letter-spacing: 2rem;
+    text-align: center;
+}
+
+/* Monospace font */
+
+code {
+    font-family: "Jetbrains Mono";
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    font-weight: 200;
+}
+
+/* Code snippet blocks */
+
+pre {
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: max-content;
+    max-width: 100%;
+    align-self: center;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+pre code {
+    font-weight: 300;
+    font-size: 1.3rem;
+    text-wrap: wrap;
+    border-style: none;
+}
