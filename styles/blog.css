@@ -1,11 +1,12 @@
 /* Blog posts */
 
 #blog-posts {
+    --gap-width: 2rem;
     display: flex;
     flex-flow: row wrap;
     align-items: left;
     justify-content: left;
-    gap: 2rem;
+    gap: var(--gap-width);
 }
 
 /* Blog entry container */
@@ -14,7 +15,8 @@
     border: solid;
     border-color: var(--fg);
     border-width: 0 0 3px 0;
-    min-width: 40rem;
+    min-width: 35rem;
+    max-width: max(calc(50% - 0.5 * var(--gap-width)), 35rem);
 }
 
 /* Blog post entry container for title and date */
