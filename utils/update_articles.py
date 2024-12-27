@@ -32,7 +32,7 @@ class BlogPost:
 
         return cls(
             path=path,
-            date=dt.date.fromisoformat("-".join(path.split("/")[2:5])),
+            date=dt.date.fromisoformat("-".join(path.split("/")[-4:-1])),
             title=title.text,
             description=first_paragraph.text[: MAX_DESCRIPTION_LEN - 1] + "...",
         )
@@ -62,6 +62,9 @@ class BlogPost:
 
 
 def main() -> None:
+
+    if len(sys.argv) < 3:
+        print("Usage: update_articles.py <blog-directory> <blog-homepage.html>")
 
     # Get arguments passed
     blog_dir = sys.argv[1]  # The directory where blog posts are located
