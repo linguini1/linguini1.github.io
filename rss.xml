@@ -2,6 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <item>
   <title>
+   Writing a NuttX SPI Driver for the BCM2711
+  </title>
+  <link>
+   https://linguini1.github.io/blog/2025/05/30/bcm2711_spi.html
+  </link>
+  <description>
+   Recently, I wrote an SPI driver for the BCM2711 as part of my ongoing effort to introduce Raspberry Pi 4B
+        support into the NuttX k...
+  </description>
+  <pubDate>
+   Fri, 30 May 2025 00:00:00
+  </pubDate>
+ </item>
+ <item>
+  <title>
    FreeCAD and 3D Printing
   </title>
   <link>

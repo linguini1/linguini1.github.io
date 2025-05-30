@@ -21,7 +21,10 @@
         <a class="raise-button" href="/blog.html"> Blog </a>
       </div>
       <div id="navbar-socials">
-        <a class="raise-button" href="https://www.linkedin.com/in/matteo-golin-94118021b/">
+        <a
+          class="raise-button"
+          href="https://www.linkedin.com/in/matteo-golin-94118021b/"
+        >
           <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
@@ -40,7 +43,9 @@
             <g>
               <polygon points="0,127.5 0,274.219 104.8,206.1 	"></polygon>
               <polygon points="400,274.219 400,127.5 295.2,206.1 	"></polygon>
-              <polygon points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"></polygon>
+              <polygon
+                points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"
+              ></polygon>
               <polygon points="0,90 200,240 400,90 400,60 0,60 	"></polygon>
             </g>
           </svg>
@@ -50,93 +55,136 @@
     <main>
       <h1>Writing a NuttX SPI Driver for the BCM2711</h1>
       <p>
-        Recently, I wrote an SPI driver for the BCM2711 as part of my ongoing effort to introduce Raspberry Pi 4B
-        support into the NuttX kernel. While the implementation was relatively straightforward just using the BCM2711
-        documentation, I encountered some difficulties that weren't immediately easy to figure out. Since the
-        information about the BCM2711 is somewhat minimal, I wanted to document some of my findings here for others.
+        Recently, I wrote an SPI driver for the BCM2711 as part of my ongoing
+        effort to introduce Raspberry Pi 4B support into the NuttX kernel. While
+        the implementation was relatively straightforward just using the BCM2711
+        documentation, I encountered some difficulties that weren't immediately
+        easy to figure out. Since the information about the BCM2711 is somewhat
+        minimal, I wanted to document some of my findings here for others.
       </p>
-
       <p>
         The
-        <a href="https://github.com/apache/nuttx/pull/16428"
-          >actual pull request where I made these changes can be found here</a
-        >. I only concerned myself with the implementation of the non-auxiliary SPI controllers, since I only wanted an
-        initial basic implementation (and the regular SPI interfaces outnumber the auxiliary ones). When I wrote this
-        driver I also started by first implementing a polled version of the driver before attempting an interrupt-based
-        driver. The PR does not reflect this, since I just rebased all my changes into a single commit before posting
-        them for review. The polled implementation was meant to reduce the amount of debugging headaches by worrying
-        about concurrency/maintaining state between interrupts.
+        <a href="https://github.com/apache/nuttx/pull/16428">
+          actual pull request where I made these changes can be found here
+        </a>
+        . I only concerned myself with the implementation of the non-auxiliary
+        SPI controllers, since I only wanted an initial basic implementation
+        (and the regular SPI interfaces outnumber the auxiliary ones). When I
+        wrote this driver I also started by first implementing a polled version
+        of the driver before attempting an interrupt-based driver. The PR does
+        not reflect this, since I just rebased all my changes into a single
+        commit before posting them for review. The polled implementation was
+        meant to reduce the amount of debugging headaches by worrying about
+        concurrency/maintaining state between interrupts.
       </p>
-
       <p>
-        As mentioned, the SPI driver is relatively straight-forward since the way the BCM2711 implements the peripherals
-        is straight-forward as well. You mark a "transfer active" bit and start writing data directly to the FIFO
-        register. When you notice that the receive FIFO is getting full (by checking the <code>RXR</code> bit), stop
-        transmitting and read some data into your receive buffer until you've drained the FIFO (<code>RXD</code> bit).
-        Rinse and repeat until you're out of data, then mark the transfer as being over. It's also roughly equivalent
-        between interrupt calls as well, and
-        <a href="https://datasheets.raspberrypi.com/bcm2711/bcm2711-peripherals.pdf"
-          >the BCM2711 peripheral datasheet</a
+        As mentioned, the SPI driver is relatively straight-forward since the
+        way the BCM2711 implements the peripherals is straight-forward as well.
+        You mark a "transfer active" bit and start writing data directly to the
+        FIFO register. When you notice that the receive FIFO is getting full (by
+        checking the
+        <code> RXR </code>
+        bit), stop transmitting and read some data into your receive buffer
+        until you've drained the FIFO (
+        <code> RXD </code>
+        bit). Rinse and repeat until you're out of data, then mark the transfer
+        as being over. It's also roughly equivalent between interrupt calls as
+        well, and
+        <a
+          href="https://datasheets.raspberrypi.com/bcm2711/bcm2711-peripherals.pdf"
         >
-        actually has a short flow description of how to implement your driver for polled, interrupt and DMA driven
-        modes.
+          the BCM2711 peripheral datasheet
+        </a>
+        actually has a short flow description of how to implement your driver
+        for polled, interrupt and DMA driven modes.
       </p>
-
       <p>
-        I won't claim that my implementation is the most efficient. For starters, it doesn't use DMA. I also lost a
-        little bit of an optimization in my interrupt implementation, since my
-        <code>spi_fill_txfifo</code> function only fills the transmit FIFO until the receive FIFO is &#190; full. In
-        reality, at the beginning of the transfer, we know that we can transmit until the receive FIFO is entirely full
-        before reading it. I just wanted a working product to play with, and NuttX is a very minimalistic RTOS which
-        typically runs on much lower power devices. I reasoned that a small SPI optimization on something as powerful as
-        a 4-core Cortex A processor is not worth the time when I'd probably just go back and re-write the driver to use
-        DMA later.
+        I won't claim that my implementation is the most efficient. For
+        starters, it doesn't use DMA. I also lost a little bit of an
+        optimization in my interrupt implementation, since my
+        <code> spi_fill_txfifo </code>
+        function only fills the transmit FIFO until the receive FIFO is &frac34;
+        full. In reality, at the beginning of the transfer, we know that we can
+        transmit until the receive FIFO is entirely full before reading it. I
+        just wanted a working product to play with, and NuttX is a very
+        minimalistic RTOS which typically runs on much lower power devices. I
+        reasoned that a small SPI optimization on something as powerful as a
+        4-core Cortex A processor is not worth the time when I'd probably just
+        go back and re-write the driver to use DMA later.
       </p>
-
       <p>
-        To test this driver, I hooked up the Pi to my MCP3008 SPI-controlled ADC and tested the NuttX driver I had
-        written for that device before. After a couple bug-fixes, I had something that worked very well. At least, I
-        thought it worked very well, because I had performed all my tests on SPI0. Since the driver worked there, I
-        figured it would work for all of the identically implemented SPI interfaces, SPI3 through 6. I added in the
-        additional code for configuring which SPI interfaces to enable and what GPIO pins to use for the ones with more
-        than one option. However, when I went to test on another SPI interface, I found that nothing there worked. My
-        pull-up/pull-down resistors were being set properly, but no signals were being sent on the interfaces despite
-        the GPIO pins being configured for the correct alternative function.
+        To test this driver, I hooked up the Pi to my MCP3008 SPI-controlled ADC
+        and tested the NuttX driver I had written for that device before. After
+        a couple bug-fixes, I had something that worked very well. At least, I
+        thought it worked very well, because I had performed all my tests on
+        SPI0. Since the driver worked there, I figured it would work for all of
+        the identically implemented SPI interfaces, SPI3 through 6. I added in
+        the additional code for configuring which SPI interfaces to enable and
+        what GPIO pins to use for the ones with more than one option. However,
+        when I went to test on another SPI interface, I found that nothing there
+        worked. My pull-up/pull-down resistors were being set properly, but no
+        signals were being sent on the interfaces despite the GPIO pins being
+        configured for the correct alternative function.
       </p>
-
       <p>
-        After much debugging and a lot of researching, I learned that the Raspberry Pi 4B device tree is used by the
-        (proprietary) bootup firmware to initialize peripherals on the device. It has the option to load additional
-        device tree overlays by specifying <code>dtoverlay=name-of-overlay</code> in the <code>config.txt</code> file.
-        You also need to include the compiled overlay file on the SD card under the <code>overlays</code> directory. It
-        took me a while to figure that out, since the boot firmware does not report an error if it can't find the
-        overlay file, it just says it opened the overlay file regardless. If you load it successfully though, it
-        displays an additional success message. Odd choice. All of the overlays are available in the
-        <a href="https://github.com/raspberrypi/firmware/tree/master/boot/overlays">raspberrypi/firmware</a> GitHub
-        repository. It has a
-        <a href="https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README">README</a> file with all of
-        the overlays listed and what each of them do. So, I tried to load the
+        After much debugging and a lot of researching, I learned that the
+        Raspberry Pi 4B device tree is used by the (proprietary) bootup firmware
+        to initialize peripherals on the device. It has the option to load
+        additional device tree overlays by specifying
+        <code> dtoverlay=name-of-overlay </code>
+        in the
+        <code> config.txt </code>
+        file. You also need to include the compiled overlay file on the SD card
+        under the
+        <code> overlays </code>
+        directory. It took me a while to figure that out, since the boot
+        firmware does not report an error if it can't find the overlay file, it
+        just says it opened the overlay file regardless. If you load it
+        successfully though, it displays an additional success message. Odd
+        choice. All of the overlays are available in the
+        <a
+          href="https://github.com/raspberrypi/firmware/tree/master/boot/overlays"
+        >
+          raspberrypi/firmware
+        </a>
+        GitHub repository. It has a
+        <a
+          href="https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README"
+        >
+          README
+        </a>
+        file with all of the overlays listed and what each of them do. So, I
+        tried to load the
         <a
           href="https://github.com/raspberrypi/firmware/blob/7e15dd42411d4185290b66eb9ccc581bebb04bf2/boot/overlays/README#L4875"
-          ><code>spi4-1cs</code></a
         >
-        overlay to try my driver on the SPI4 interface. However, it still didn't work. As it turns out, the BCM2711
-        startup firmware doesn't do everything that's required for the overlay to work, it only does some basic
-        house-keeping. The real magic is the Raspberry Pi Linux kernel, which gets passed the overlaid device tree and
-        is then responsible for setting up peripherals. I suppose each of the SPI interfaces has some separate enable
-        register that I would need to modify, but that isn't documented in the BCM2711 peripheral data sheet. Instead, I
-        would have to reverse-engineer the Linux code to see what's required. I decided that would be a task for later,
-        since there is a lot to sift through there and I was not interested in delaying the initial support for that.
+          <code> spi4-1cs </code>
+        </a>
+        overlay to try my driver on the SPI4 interface. However, it still didn't
+        work. As it turns out, the BCM2711 startup firmware doesn't do
+        everything that's required for the overlay to work, it only does some
+        basic house-keeping. The real magic is the Raspberry Pi Linux kernel,
+        which gets passed the overlaid device tree and is then responsible for
+        setting up peripherals. I suppose each of the SPI interfaces has some
+        separate enable register that I would need to modify, but that isn't
+        documented in the BCM2711 peripheral data sheet. Instead, I would have
+        to reverse-engineer the Linux code to see what's required. I decided
+        that would be a task for later, since there is a lot to sift through
+        there and I was not interested in delaying the initial support for that.
       </p>
-
       <p>
-        I'll likely take a look at setting up the extra peripherals (those not included in the base device tree for the
-        Pi 4B) after I re-visit the I2C driver for the Raspberry Pi. I found a YouTube channel called
-        <a href="https://www.youtube.com/@lowleveldevel1712">Low Level Devel</a> which has some videos detailing some
-        basic driver code for the BCM2835 (older Pi processor), and I gather the I2C interfaces are identical or at
-        least very similar to the BCM2711. I'll see if I can take the driver further this time around, and hopefully I
-        won't get hung up on the no-stop and no-start options to the NuttX upper-half driver (the BCM2711 doesn't make
-        that readily easy to implement).
+        I'll likely take a look at setting up the extra peripherals (those not
+        included in the base device tree for the Pi 4B) after I re-visit the I2C
+        driver for the Raspberry Pi. I found a YouTube channel called
+        <a href="https://www.youtube.com/@lowleveldevel1712">
+          Low Level Devel
+        </a>
+        which has some videos detailing some basic driver code for the BCM2835
+        (older Pi processor), and I gather the I2C interfaces are identical or
+        at least very similar to the BCM2711. I'll see if I can take the driver
+        further this time around, and hopefully I won't get hung up on the
+        no-stop and no-start options to the NuttX upper-half driver (the BCM2711
+        doesn't make that readily easy to implement).
       </p>
     </main>
   </body>
