@@ -19,7 +19,7 @@ jobs:
     - name: Install requirements
       run:  |
         pip install -r requirements.txt;
-        sudo apt install prettier
+        npm install -g prettier
 
     - name: Build static pages
       run:  |
