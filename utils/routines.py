@@ -1,5 +1,5 @@
 import copy
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from .modules.blog_post import BlogPost
 
 
@@ -109,8 +109,6 @@ def inject_navbar(nav_template: str, files: list[str]) -> None:
         with open(page, "w") as file:
             file.write(soup.prettify(formatter="html"))
 
-        print(f"Processed {page}")
-
 
 def inject_title(title_template: str, files: list[str]) -> None:
     """
@@ -146,4 +144,45 @@ def inject_title(title_template: str, files: list[str]) -> None:
         with open(page, "w") as file:
             file.write(soup.prettify(formatter="html"))
 
-        print(f"Processed {page}")
+
+def inject_head(head: str, files: list[str]) -> None:
+    """
+    Injects the HTML required for the <head> tag into the <head> tag of each page.
+    :param head: The HTML file containing the tags to be included in the <head> tag.
+    :param files: The list of files to inject the head into.
+    """
+
+    with open(head, "r") as file:
+        head_data = BeautifulSoup(file, "html.parser")
+
+    # Inject it into all the files
+    for page in files:
+
+        with open(page, "r") as file:
+            soup = BeautifulSoup(file, "html.parser")
+
+        # Check if the page has a head tag
+
+        head_tag = soup.find("head")
+        if head_tag is None:
+            raise ValueError(f"Page {page} does not have a head tag!")
+
+        # If duplicate tags exist, remove them
+        for tag in head_data.find_all(recursive=False):
+            if type(tag) is not Tag:
+                continue
+
+            for existing_tag in head_tag.find_all(recursive=False):
+                if type(existing_tag) is not Tag:
+                    continue
+
+                # Remove existing tag if its identical to tag being added
+                if existing_tag.name == tag.name and dict(existing_tag.attrs) == dict(tag.attrs):
+                    existing_tag.extract()
+
+        # Add the title template to the beginning of the body
+
+        head_tag.append(copy.copy(head_data))
+
+        with open(page, "w") as file:
+            file.write(soup.prettify(formatter="html"))

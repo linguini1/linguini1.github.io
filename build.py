@@ -1,5 +1,5 @@
 from utils.modules.blog_post import get_blogposts
-from utils.routines import inject_navbar, inject_title, update_blogpage, update_rss
+from utils.routines import inject_navbar, inject_title, update_blogpage, update_rss, inject_head
 import glob
 
 PROD_NAVBAR_SCRIPT: str = "scripts/navbar.js"  # Production navbar.js script
@@ -24,6 +24,7 @@ def main() -> None:
     # Inject HTML additions to all pages
     inject_navbar(nav_template="templates/navbar.html", files=pages)
     inject_title(title_template="templates/title.html", files=pages)
+    inject_head(head="templates/commonhead.html", files=pages)
 
 
 if __name__ == "__main__":
