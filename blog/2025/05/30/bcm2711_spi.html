@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="/styles/blog-post.css" rel="stylesheet" />
+    <title>Matteo Golin</title>
+    <link href="/styles/global.css" rel="stylesheet" />
+    <link href="/styles/navbar.css" rel="stylesheet" />
+    <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml" />
+    <script src="/scripts/navbar.js"></script>
+  </head>
+  <body>
+    <h1 id="site-title">Matteo Golin</h1>
+    <div id="navbar">
+      <div id="navbar-toggle">
+        <div id="navbar-toggle-ball" onclick="swap_colour()"></div>
+        <div id="navbar-toggle-socket"></div>
+      </div>
+      <div id="navbar-pages">
+        <a class="raise-button" href="/"> Home </a>
+        <a class="raise-button" href="/about.html"> About </a>
+        <a class="raise-button" href="/blog.html"> Blog </a>
+      </div>
+      <div id="navbar-socials">
+        <a class="raise-button" href="https://www.linkedin.com/in/matteo-golin-94118021b/">
+          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+            ></path>
+          </svg>
+        </a>
+        <a class="raise-button" href="https://github.com/linguini1/">
+          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+            ></path>
+          </svg>
+        </a>
+        <a class="raise-button" href="mailto:matteo.golin@gmail.com">
+          <svg viewbox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <polygon points="0,127.5 0,274.219 104.8,206.1 	"></polygon>
+              <polygon points="400,274.219 400,127.5 295.2,206.1 	"></polygon>
+              <polygon points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"></polygon>
+              <polygon points="0,90 200,240 400,90 400,60 0,60 	"></polygon>
+            </g>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <main>
+      <h1>Writing a NuttX SPI Driver for the BCM2711</h1>
+      <p>
+        Recently, I wrote an SPI driver for the BCM2711 as part of my ongoing effort to introduce Raspberry Pi 4B
+        support into the NuttX kernel. While the implementation was relatively straightforward just using the BCM2711
+        documentation, I encountered some difficulties that weren't immediately easy to figure out. Since the
+        information about the BCM2711 is somewhat minimal, I wanted to document some of my findings here for others.
+      </p>
+
+      <p>
+        The
+        <a href="https://github.com/apache/nuttx/pull/16428"
+          >actual pull request where I made these changes can be found here</a
+        >. I only concerned myself with the implementation of the non-auxiliary SPI controllers, since I only wanted an
+        initial basic implementation (and the regular SPI interfaces outnumber the auxiliary ones). When I wrote this
+        driver I also started by first implementing a polled version of the driver before attempting an interrupt-based
+        driver. The PR does not reflect this, since I just rebased all my changes into a single commit before posting
+        them for review. The polled implementation was meant to reduce the amount of debugging headaches by worrying
+        about concurrency/maintaining state between interrupts.
+      </p>
+
+      <p>
+        As mentioned, the SPI driver is relatively straight-forward since the way the BCM2711 implements the peripherals
+        is straight-forward as well. You mark a "transfer active" bit and start writing data directly to the FIFO
+        register. When you notice that the receive FIFO is getting full (by checking the <code>RXR</code> bit), stop
+        transmitting and read some data into your receive buffer until you've drained the FIFO (<code>RXD</code> bit).
+        Rinse and repeat until you're out of data, then mark the transfer as being over. It's also roughly equivalent
+        between interrupt calls as well, and
+        <a href="https://datasheets.raspberrypi.com/bcm2711/bcm2711-peripherals.pdf"
+          >the BCM2711 peripheral datasheet</a
+        >
+        actually has a short flow description of how to implement your driver for polled, interrupt and DMA driven
+        modes.
+      </p>
+
+      <p>
+        I won't claim that my implementation is the most efficient. For starters, it doesn't use DMA. I also lost a
+        little bit of an optimization in my interrupt implementation, since my
+        <code>spi_fill_txfifo</code> function only fills the transmit FIFO until the receive FIFO is &#190; full. In
+        reality, at the beginning of the transfer, we know that we can transmit until the receive FIFO is entirely full
+        before reading it. I just wanted a working product to play with, and NuttX is a very minimalistic RTOS which
+        typically runs on much lower power devices. I reasoned that a small SPI optimization on something as powerful as
+        a 4-core Cortex A processor is not worth the time when I'd probably just go back and re-write the driver to use
+        DMA later.
+      </p>
+
+      <p>
+        To test this driver, I hooked up the Pi to my MCP3008 SPI-controlled ADC and tested the NuttX driver I had
+        written for that device before. After a couple bug-fixes, I had something that worked very well. At least, I
+        thought it worked very well, because I had performed all my tests on SPI0. Since the driver worked there, I
+        figured it would work for all of the identically implemented SPI interfaces, SPI3 through 6. I added in the
+        additional code for configuring which SPI interfaces to enable and what GPIO pins to use for the ones with more
+        than one option. However, when I went to test on another SPI interface, I found that nothing there worked. My
+        pull-up/pull-down resistors were being set properly, but no signals were being sent on the interfaces despite
+        the GPIO pins being configured for the correct alternative function.
+      </p>
+
+      <p>
+        After much debugging and a lot of researching, I learned that the Raspberry Pi 4B device tree is used by the
+        (proprietary) bootup firmware to initialize peripherals on the device. It has the option to load additional
+        device tree overlays by specifying <code>dtoverlay=name-of-overlay</code> in the <code>config.txt</code> file.
+        You also need to include the compiled overlay file on the SD card under the <code>overlays</code> directory. It
+        took me a while to figure that out, since the boot firmware does not report an error if it can't find the
+        overlay file, it just says it opened the overlay file regardless. If you load it successfully though, it
+        displays an additional success message. Odd choice. All of the overlays are available in the
+        <a href="https://github.com/raspberrypi/firmware/tree/master/boot/overlays">raspberrypi/firmware</a> GitHub
+        repository. It has a
+        <a href="https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README">README</a> file with all of
+        the overlays listed and what each of them do. So, I tried to load the
+        <a
+          href="https://github.com/raspberrypi/firmware/blob/7e15dd42411d4185290b66eb9ccc581bebb04bf2/boot/overlays/README#L4875"
+          ><code>spi4-1cs</code></a
+        >
+        overlay to try my driver on the SPI4 interface. However, it still didn't work. As it turns out, the BCM2711
+        startup firmware doesn't do everything that's required for the overlay to work, it only does some basic
+        house-keeping. The real magic is the Raspberry Pi Linux kernel, which gets passed the overlaid device tree and
+        is then responsible for setting up peripherals. I suppose each of the SPI interfaces has some separate enable
+        register that I would need to modify, but that isn't documented in the BCM2711 peripheral data sheet. Instead, I
+        would have to reverse-engineer the Linux code to see what's required. I decided that would be a task for later,
+        since there is a lot to sift through there and I was not interested in delaying the initial support for that.
+      </p>
+
+      <p>
+        I'll likely take a look at setting up the extra peripherals (those not included in the base device tree for the
+        Pi 4B) after I re-visit the I2C driver for the Raspberry Pi. I found a YouTube channel called
+        <a href="https://www.youtube.com/@lowleveldevel1712">Low Level Devel</a> which has some videos detailing some
+        basic driver code for the BCM2835 (older Pi processor), and I gather the I2C interfaces are identical or at
+        least very similar to the BCM2711. I'll see if I can take the driver further this time around, and hopefully I
+        won't get hung up on the no-stop and no-start options to the NuttX upper-half driver (the BCM2711 doesn't make
+        that readily easy to implement).
+      </p>
+    </main>
+  </body>
+</html>
