@@ -28,6 +28,10 @@
     width: 2rem;
 }
 
+#navbar-socials a {
+    padding-bottom: 0;
+}
+
 /* Text operations on the page titles */
 
 #navbar-pages a {

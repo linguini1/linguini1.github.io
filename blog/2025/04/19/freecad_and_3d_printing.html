@@ -1,91 +1,121 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Matteo Golin</title>
-    <link href="/styles/global.css" rel="stylesheet" />
-    <link href="/styles/navbar.css" rel="stylesheet" />
-    <link href="/styles/blog-post.css" rel="stylesheet" />
-    <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml" />
-    <script src="/scripts/navbar.js"></script>
-  </head>
-  <body>
-    <h1 id="site-title">Matteo Golin</h1>
-    <div id="navbar">
-      <div id="navbar-toggle">
-        <div id="navbar-toggle-ball" onclick="swap_colour()"></div>
-        <div id="navbar-toggle-socket"></div>
-      </div>
-      <div id="navbar-pages">
-        <a class="raise-button" href="/"> Home </a>
-        <a class="raise-button" href="/about.html"> About </a>
-        <a class="raise-button" href="/blog.html"> Blog </a>
-      </div>
-      <div id="navbar-socials">
-        <a
-          class="raise-button"
-          href="https://www.linkedin.com/in/matteo-golin-94118021b/"
-        >
-          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
-            ></path>
-          </svg>
-        </a>
-        <a class="raise-button" href="https://github.com/linguini1/">
-          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-            ></path>
-          </svg>
-        </a>
-      </div>
+ <head>
+  <title>
+   Matteo Golin
+  </title>
+  <link href="/styles/global.css" rel="stylesheet"/>
+  <link href="/styles/navbar.css" rel="stylesheet"/>
+  <link href="/styles/blog-post.css" rel="stylesheet"/>
+  <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml"/>
+  <script src="/scripts/navbar.js">
+  </script>
+ </head>
+ <body>
+  <h1 id="site-title">
+   Matteo Golin
+  </h1>
+  <div id="navbar">
+   <div id="navbar-toggle">
+    <div id="navbar-toggle-ball" onclick="swap_colour()">
     </div>
-    <main>
-      <h1>FreeCAD and 3D Printing</h1>
-      <p>
-        After spending time 3D modelling my L1 certification rocket in
+    <div id="navbar-toggle-socket">
+    </div>
+   </div>
+   <div id="navbar-pages">
+    <a class="raise-button" href="/">
+     Home
+    </a>
+    <a class="raise-button" href="/about.html">
+     About
+    </a>
+    <a class="raise-button" href="/blog.html">
+     Blog
+    </a>
+   </div>
+   <div id="navbar-socials">
+    <a class="raise-button" href="https://www.linkedin.com/in/matteo-golin-94118021b/">
+     <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z">
+      </path>
+     </svg>
+    </a>
+    <a class="raise-button" href="https://github.com/linguini1/">
+     <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z">
+      </path>
+     </svg>
+    </a>
+    <a class="raise-button" href="mailto:matteo.golin@gmail.com">
+     <svg viewbox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <g>
+       <polygon points="0,127.5 0,274.219 104.8,206.1 	">
+       </polygon>
+       <polygon points="400,274.219 400,127.5 295.2,206.1 	">
+       </polygon>
+       <polygon points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	">
+       </polygon>
+       <polygon points="0,90 200,240 400,90 400,60 0,60 	">
+       </polygon>
+      </g>
+     </svg>
+    </a>
+   </div>
+  </div>
+  <main>
+   <h1>
+    FreeCAD and 3D Printing
+   </h1>
+   <p>
+    After spending time 3D modelling my L1 certification rocket in
         Solidworks using my university rocketry team's subscription, I started
         getting into modelling other things for use in various projects around
         the team. The university had recently invested in a large 3D print farm
         using Prusa XL's, which design teams were able to book out and use for
         weeks at a time. I had quite a bit of fun modelling several different
         things:
-      </p>
-      <ul>
-        <li>
-          A screw switch cover to prevent the screw from backing out when
+   </p>
+   <ul>
+    <li>
+     A screw switch cover to prevent the screw from backing out when
           disarming
-        </li>
-        <li>
-          A bottle cap for a Raptor CO2 canister so it could be used as a flask
-        </li>
-        <li>
-          Desk and drawer organizers for the constantly messy workspaces
+    </li>
+    <li>
+     A bottle cap for a Raptor CO2 canister so it could be used as a flask
+    </li>
+    <li>
+     Desk and drawer organizers for the constantly messy workspaces
           (succeeded in cleaning up a good bit of it)
-        </li>
-      </ul>
-      <p>
-        Fortunately (and unfortunately), this is my graduating year. I won't
+    </li>
+   </ul>
+   <p>
+    Fortunately (and unfortunately), this is my graduating year. I won't
         have access to the team's Solidworks subscription forever, and I wanted
         to use a CAD program that would run on my Linux desktop
-        <i> and </i>
-        my Windows laptop. Solidworks was very slow and clunky to load and
+    <i>
+     and
+    </i>
+    my Windows laptop. Solidworks was very slow and clunky to load and
         consumed a ton of system resources, so something lighter weight but with
         the same or similar capabilities (parametric CAD is enough for a
         beginner like me, no fancy simulations necessary yet) was my goal.
-      </p>
-      <h2>Using FreeCAD</h2>
-      <p>
-        It was at this time I found
-        <a href="https://www.freecad.org/"> FreeCAD </a>
-        while searching for free CAD programs that could run on Linux. There
+   </p>
+   <h2>
+    Using FreeCAD
+   </h2>
+   <p>
+    It was at this time I found
+    <a href="https://www.freecad.org/">
+     FreeCAD
+    </a>
+    while searching for free CAD programs that could run on Linux. There
         were a lot of negative reviews of the older versions of FreeCAD calling
         it unusable from what I was able to find, but a more recent version 1.0
         was generating a lot of positive buzz. I decided to give it a try for
         myself and was quite amazed overall.
-      </p>
-      <p>
-        FreeCAD's part workbench operated in essentially the same way that I was
+   </p>
+   <p>
+    FreeCAD's part workbench operated in essentially the same way that I was
         used to from Solidworks: make a sketch, constrain it, then perform 3D
         operations on the sketch to make parts (extrude, cut, add holes, mirror,
         etc.). It didn't take very long to get used to that part of the
@@ -93,24 +123,24 @@
         enough from Solidworks for mating parts that it took some getting used
         to, but was still relatively easy to understand with the help of the
         documentation.
-      </p>
-      <p>
-        To me, there are two very exciting features of FreeCAD that make it
+   </p>
+   <p>
+    To me, there are two very exciting features of FreeCAD that make it
         powerful. The first is the Python API, which allows you to script macros
         and small programs that modify your CAD models. It makes the program
         incredibly extensible. You're able to modify all the keybinds to your
         liking as well, and change the navigation modes to match whatever you're
         used to (TinkerCAD, OpenSCAD, Blender, etc.).
-      </p>
-      <p>
-        The second amazing feature (allowed by the Python API and the fact that
+   </p>
+   <p>
+    The second amazing feature (allowed by the Python API and the fact that
         FreeCAD is open source) is the add-on manager. FreeCAD allows community
         members to create their own add-ons that add features or modify FreeCAD
         behaviour. One of my personal favourites is the
-        <a href="https://wiki.freecad.org/Fasteners_Workbench">
-          fasteners workbench
-        </a>
-        . It allows you to add any kind of standard fastener to your model and
+    <a href="https://wiki.freecad.org/Fasteners_Workbench">
+     fasteners workbench
+    </a>
+    . It allows you to add any kind of standard fastener to your model and
         assemblies, and the fasteners are parametric about standard parameters.
         You can choose a metric socket head screw, then decide if it's M3, M4,
         M5, etc. and even change its length to whatever size your model
@@ -122,47 +152,49 @@
         FreeCAD it's much easier and the models already come parametric, so you
         can link the length of a fastener to some parameter of your main design,
         or turn of the thread rendering easily.
-      </p>
-      <div class="figure">
-        <img
-          src="fastener-workbench.png"
-          width="80%"
-        />
-        <p>The many fastener options available in the fastener workbench.</p>
-      </div>
-      <p>
-        The extendability of FreeCAD through scripting and add-ons is incredibly
+   </p>
+   <div class="figure">
+    <img src="fastener-workbench.png" width="80%"/>
+    <p>
+     The many fastener options available in the fastener workbench.
+    </p>
+   </div>
+   <p>
+    The extendability of FreeCAD through scripting and add-ons is incredibly
         adjacent to the Lua + plugin ecosystem of Neovim. Those features are
         major selling points of Neovim as a text editor, and it's exactly the
         same for a 3D modelling program that engineers spend
-        <i> lots </i>
-        of time modelling in every day.
-      </p>
-      <h2>3D Printing</h2>
-      <p>
-        Since I had so much fun printing designs on my university's 3D printers,
+    <i>
+     lots
+    </i>
+    of time modelling in every day.
+   </p>
+   <h2>
+    3D Printing
+   </h2>
+   <p>
+    Since I had so much fun printing designs on my university's 3D printers,
         I decided I wanted to get one of my own to learn more about them and to
         print my own designs. This way I could turn the models I made using
         FreeCAD into reality and build my own useful projects.
-      </p>
-      <p>
-        After doing some research about 3D printers, I learned quite a bit about
+   </p>
+   <p>
+    After doing some research about 3D printers, I learned quite a bit about
         the different manufacturers. I really like the Prusa printers because of
         their high quality, great support system and open-source ecosystem.
         However, they were wildly more expensive than other alternatives. I
         didn't want to overspend on my very first 3D printer. I spoke with some
         other students I knew who had 3D printers and decided on the Creality
         Ender 3 V3 KE.
-      </p>
-      <div class="figure">
-        <img
-          src="https://3d.nice-cdn.com/upload/image/product/large/default/30890_978de73b.768x768.png"
-          width="50%"
-        />
-        <p>The Creality Ender 3 V3 KE</p>
-      </div>
-      <p>
-        This is a cheap printer which is generally regarded as a good entry
+   </p>
+   <div class="figure">
+    <img src="https://3d.nice-cdn.com/upload/image/product/large/default/30890_978de73b.768x768.png" width="50%"/>
+    <p>
+     The Creality Ender 3 V3 KE
+    </p>
+   </div>
+   <p>
+    This is a cheap printer which is generally regarded as a good entry
         printer. It requires some maintenance and can be modded, which would
         help me learn more about 3D printers in general. In comparison to the
         older Ender 3 models, the KE has automatic bed levelling and is said to
@@ -170,66 +202,61 @@
         also capable of printing ABS, although without an enclosure I heard it
         may be difficult to achieve good prints. For now I've only been printing
         with PLA.
-      </p>
-      <p>
-        Thus far, I've had an excellent time making storage bins that are
+   </p>
+   <p>
+    Thus far, I've had an excellent time making storage bins that are
         Gridfinity compatible. I've cleaned out a ton of my junk drawers and
         given everything a proper, unique home so that it gets put away where it
         should go. It's also been very convenient for changing how things are
         organized within drawers; I can easily move what I've been using more
         often to the front of the drawer, and then to the back again when it
         becomes less used.
-      </p>
-      <div class="figure">
-        <a
-          href="https://www.printables.com/model/1264637-gridfinity-seeed-studio-xiao-microcontroller-holde"
-        >
-          <img
-            src="https://media.printables.com/media/prints/30775aa2-15b5-4b3e-b0c2-30225a898712/images/9509338_c38b0883-75b2-42ed-9a26-327af723c18f_1e3a69fc-75a7-4b07-9d4d-4ec7ed40417e/thumbs/inside/1600x1200/jpg/xiao-in-container.webp"
-            width="45%"
-          />
-          <p>A Gridfinity module for holding XIAO footprint microcontrollers</p>
-        </a>
-      </div>
-      <div class="figure">
-        <a
-          href="https://www.printables.com/model/1268266-gridfinity-astroai-dm6000ar-multimeter-holder"
-        >
-          <img
-            src="https://media.printables.com/media/prints/c2c36fed-c20b-4b1b-948d-6089fcc388fd/images/9525134_d8065da6-6b14-4ba3-b92f-b08b58e87abd_c4d0e590-ffb4-49aa-992a-5072b7a926db/thumbs/inside/1600x1200/jpg/multimeter-holder-top-view.webp"
-            width="45%"
-          />
-          <p>A Gridfinity module for holding my multimeter and its leads</p>
-        </a>
-      </div>
-      <p>
-        I even made a small model rocket for flying B-class motors! It has a
+   </p>
+   <div class="figure">
+    <a href="https://www.printables.com/model/1264637-gridfinity-seeed-studio-xiao-microcontroller-holde">
+     <img src="https://media.printables.com/media/prints/30775aa2-15b5-4b3e-b0c2-30225a898712/images/9509338_c38b0883-75b2-42ed-9a26-327af723c18f_1e3a69fc-75a7-4b07-9d4d-4ec7ed40417e/thumbs/inside/1600x1200/jpg/xiao-in-container.webp" width="45%"/>
+     <p>
+      A Gridfinity module for holding XIAO footprint microcontrollers
+     </p>
+    </a>
+   </div>
+   <div class="figure">
+    <a href="https://www.printables.com/model/1268266-gridfinity-astroai-dm6000ar-multimeter-holder">
+     <img src="https://media.printables.com/media/prints/c2c36fed-c20b-4b1b-948d-6089fcc388fd/images/9525134_d8065da6-6b14-4ba3-b92f-b08b58e87abd_c4d0e590-ffb4-49aa-992a-5072b7a926db/thumbs/inside/1600x1200/jpg/multimeter-holder-top-view.webp" width="45%"/>
+     <p>
+      A Gridfinity module for holding my multimeter and its leads
+     </p>
+    </a>
+   </div>
+   <p>
+    I even made a small model rocket for flying B-class motors! It has a
         full recovery system and didn't take hardly any filament or time to
         print. I posted all my models on
-        <a href="https://www.printables.com/"> Printables </a>
-        so that other people are able to print and use them as well. I posted
+    <a href="https://www.printables.com/">
+     Printables
+    </a>
+    so that other people are able to print and use them as well. I posted
         them along with the FreeCAD files in case any other makers want to tweak
         the settings or modify an original CAD file.
-      </p>
-      <div class="figure">
-        <a href="https://www.printables.com/model/1264299-small-rocket-model">
-          <img
-            src="https://media.printables.com/media/prints/445817d9-fa51-4b8d-8746-aaf25e8dd15b/images/9496168_c5491c3c-4590-455a-be3c-311d2d1d6f95_67ebaec9-e219-4f21-b7a3-e4c8edc30428/thumbs/inside/1600x1200/jpg/rocket-break.webp"
-            width="45%"
-          />
-          <p>Model rocket for flying B-class motors</p>
-        </a>
-      </div>
-      <p>
-        I really cannot recommend 3D printing enough to anybody. I am computer
+   </p>
+   <div class="figure">
+    <a href="https://www.printables.com/model/1264299-small-rocket-model">
+     <img src="https://media.printables.com/media/prints/445817d9-fa51-4b8d-8746-aaf25e8dd15b/images/9496168_c5491c3c-4590-455a-be3c-311d2d1d6f95_67ebaec9-e219-4f21-b7a3-e4c8edc30428/thumbs/inside/1600x1200/jpg/rocket-break.webp" width="45%"/>
+     <p>
+      Model rocket for flying B-class motors
+     </p>
+    </a>
+   </div>
+   <p>
+    I really cannot recommend 3D printing enough to anybody. I am computer
         systems engineer by formal education, and did not touch any 3D design or
         modelling since my first year of undergrad. It was only recently after
         having to model my own rocket that I realized how powerful and how fun
         it could be, especially coupled with a relatively cheap 3D printer to
         actually make the models into something physical and useful.
-      </p>
-      <p>
-        Now that I have access to my own 3D printer and FreeCAD, I hope to break
+   </p>
+   <p>
+    Now that I have access to my own 3D printer and FreeCAD, I hope to break
         out of the domain I've been working in for most of my undergrad:
         software and electrical design. Now I can design mechatronics for my
         software and circuits to control, and turn them into a reality in a few
@@ -237,7 +264,7 @@
         "well-rounded engineer" compared to how I had stuck to software and
         electrical design for so long. I'm very excited to learn more about
         designing mechanical systems and actually build some useful things!
-      </p>
-    </main>
-  </body>
+   </p>
+  </main>
+ </body>
 </html>
