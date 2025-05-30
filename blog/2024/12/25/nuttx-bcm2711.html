@@ -1,902 +1,1117 @@
 <!doctype html>
 <html>
-
-<head>
+  <head>
     <title>Matteo Golin</title>
-    <link rel="stylesheet" href="/styles/global.css" />
-    <link rel="stylesheet" href="/styles/navbar.css" />
-    <link rel="stylesheet" href="/styles/blog-post.css" />
-    <link rel="icon" type="image/svg+xml" href="/assets/conwayPulsar.svg" />
+    <link href="/styles/global.css" rel="stylesheet" />
+    <link href="/styles/navbar.css" rel="stylesheet" />
+    <link href="/styles/blog-post.css" rel="stylesheet" />
+    <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml" />
     <script src="/scripts/navbar.js"></script>
-</head>
-
-<body>
+  </head>
+  <body>
+    <h1 id="site-title">Matteo Golin</h1>
+    <div id="navbar">
+      <div id="navbar-toggle">
+        <div id="navbar-toggle-ball" onclick="swap_colour()"></div>
+        <div id="navbar-toggle-socket"></div>
+      </div>
+      <div id="navbar-pages">
+        <a class="raise-button" href="/"> Home </a>
+        <a class="raise-button" href="/about.html"> About </a>
+        <a class="raise-button" href="/blog.html"> Blog </a>
+      </div>
+      <div id="navbar-socials">
+        <a
+          class="raise-button"
+          href="https://www.linkedin.com/in/matteo-golin-94118021b/"
+        >
+          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+            ></path>
+          </svg>
+        </a>
+        <a class="raise-button" href="https://github.com/linguini1/">
+          <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </div>
     <main>
-        <h1>Porting NuttX to the Raspberry Pi 4B</h1>
-        <p>
-            When I was getting into RTOSs, the first RTOS I experimented with was Blackberry's QNX. It's a microkernel,
-            POSIX compliant, real-time operating system for embedded applications. However, I discovered soon after that
-            its microkernel and security features came with the requirement of a system with a MMU. The only hobbyist
-            device that QNX ran on at the time was a Raspberry Pi 4B, which for my application of a rocketry flight
-            computer, wasn't exactly the low-power, small form factor device I was looking for. It was at that point
-            where I starting exploring alternatives, and came across <a href="https://nuttx.apache.org/"> Apache NuttX
-            </a>, which was scalable from 8 bit to 64 bit systems, and could run in sometimes as little as 16KB of
-            flash!
-        </p>
-        <p>
-            Although NuttX came with support for so many cheap, hobbyist boards, I noticed that it was missing support
-            for
-            the Raspberry Pi 4B. I was interested to see if I could port NuttX to the Pi and run my old, POSIX compliant
-            software that was already written for QNX on it. I knew the Pi 4B was a popular hobbyist board, and also
-            came
-            with a lot of great peripherals that could be useful for benchmarking NuttX and trying out all its different
-            features. I also knew that NuttX already had support for the ARMv8-A architecture, so I had some groundwork
-            already laid out for me. Thus began the endeavour of adding support for the BCM2711 on NuttX.
-        </p>
-        <p>
-            Most of the documentation about the BCM2711 online comes from a
-            <a href="https://datasheets.raspberrypi.com/bcm2711/bcm2711-peripherals.pdf">peripheral datasheet released
-                by Raspberry Pi</a>
-            (which does not cover many of the peripherals already on the Pi 4B). I wanted to try to document my process
-            a
-            little bit to both make it easier for NuttX contributors to do future ports, and also to add a little more
-            documentation about the BCM2711 online. There were not many resources about bare-metal programming the Pi 4B
-            outside of the few I stumbled on (such as the
-            <a href="https://github.com/babbleberry/rpi4-osdev">rpi4-osdev</a> project).
-        </p>
-        <p>
-            Below are the journal entries I made while undergoing the port. I have also included a more refined version
-            of these notes in the <a href="https://nuttx.apache.org/docs/latest/guides/port.html">NuttX guides
-                documentation</a>, but I wrote
-            out all this information to be of use, so I may as well post it somewhere accessible. You can also see the
-            <a href="https://github.com/apache/nuttx/pull/15188">initial support pull request to the NuttX kernel here</a>.
-            While you read, <strong>please remember that I was learning along the way while writing these entries,
-            and some of the assumptions or statements I make about existing NuttX functionality and the BCM2711 may be
-            misinformed, incorrect, or no longer true.</strong>
-            Hopefully these entries are of some utility!
-        </p>
-
-
-        <h3>Table of Contents</h3>
-        <ul style="display: flex; gap: 4rem; text-transform: uppercase;">
-            <div>
-                <li><a href="#day1">Day 1</a></li>
-                <li><a href="#day2">Day 2</a></li>
-                <li><a href="#day3">Day 3</a></li>
-                <li><a href="#day4">Day 4</a></li>
-                <li><a href="#day5">Day 5</a></li>
-                <li><a href="#day6">Day 6</a></li>
-                <li><a href="#day7">Day 7</a></li>
-            </div>
-            <div>
-                <li><a href="#day8">Day 8</a></li>
-                <li><a href="#day9">Day 9</a></li>
-                <li><a href="#day10">Day 10</a></li>
-                <li><a href="#day11">Day 11</a></li>
-                <li><a href="#day12">Day 12</a></li>
-                <li><a href="#day13">Day 13</a></li>
-                <li><a href="#day14">Day 14</a></li>
-            </div>
-        </ul>
-
-        <h2 id="day1">Day 1: 2024-07-25</h2>
-
-        <p>
-            I am beginning work on porting NuttX to the Raspberry Pi 4B. I had originally been using QNX on this
-            platform,
-            but after learning about NuttX and the range of different systems it supports, I wanted to start
-            experimenting
-            with it instead. Unfortunately the Raspberry Pi 4B was not one of the systems with existing NuttX support. I
-            thought it would make a nice development board because it's very densely featured.
-        </p>
-
-        <p>
-            I first checked the NuttX issues listing in case someone else had already begun work on the port. I found an
-            existing issue which referenced Gregory Nutt's previous work on a port, but at the time he was writing it
-            for
-            the BCM2708 (and the BCM2835) chip. The Raspberry Pi 4B uses a BCM2711, so I would be able to use his prior
-            work
-            as a reference point but not as a completely started implementation.
-        </p>
-
-        <p>
-            I initially began with researching the BCM2711 chip. I knew from prior experience that is was part of the
-            aarch64 architecture. Looking at the data sheet provided by Raspberry Pi, I learned about the different
-            available interfaces and their register interfaces. I looked through Gregory's previous work and the source code
-            for the RP2040 implementation on NuttX (because of prior familiarity), and saw that there were quite a few headers
-            defined for the memory map, register locations and bit masks for accessing the different sections of each register.
-            This seemed like the
-            logical place to start for me, because I would need to be able to access all the different registers in order to do
-            anything with the chip. I began creating these header files in a similar style to what I had already seen done:
-        </p>
-
-        <ul>
-            <li><code>bcm2711_armtimer.h</code></li>
-            <li><code>bcm2711_aux.h</code></li>
-            <li><code>bcm2711_bsc.h</code></li>
-            <li><code>bcm2711_dma.h</code></li>
-            <li><code>bcm2711_gpclk.h</code></li>
-            <li><code>bcm2711_gpio.h</code></li>
-            <li><code>bcm2711_irq.h</code></li>
-            <li><code>bcm2711_mailbox.h</code></li>
-            <li><code>bcm2711_memmap.h</code></li>
-            <li><code>bcm2711_pcm.h</code></li>
-            <li><code>bcm2711_pwm.h</code></li>
-            <li><code>bcm2711_spi.h</code></li>
-            <li><code>bcm2711_systimer.h</code></li>
-            <li><code>bcm2711_uart.h</code></li>
-        </ul>
-
-        <p>
-            The memory map header contained base addresses for each of the different interfaces that I had seen listed
-            in
-            the datasheet. Then, I created a header file for each section of the data sheet (covering a different
-            interface)
-            in which I defined the register addresses for the interface by using the base address + some offset. Once I
-            had
-            all the registers listed, I also created bitmasks for all of the individual parts of each register. Some
-            registers just contained 32 bit numbers or were intended to be accessed as a single 32-bit word, so I did
-            not
-            create masks for those.
-        </p>
-
-        <p>
-            Once I had completed this copying work into header files, I took a look through Gregory's prior
-            implementation
-            and started getting unsure of where to start. There are a lot of interfaces to implement for NuttX, and I
-            wasn't
-            quite sure which ones needed to be implemented first to build off of. I decided that this was probably
-            because I
-            was still relatively new to NuttX, and I would need to read through the documentation to get a better grasp
-            of
-            the inner workings of the kernel.
-        </p>
-
-        <a href="https://nuttx.apache.org/docs/latest/">NuttX Documentation Website</a>
-
-        <p>
-            I ended up reading through quite a bit of the NuttX website's documentation page; parts of the "OS
-            Components"
-            section and all of the "Implementation Details" section. After reading these, I did learn more about the
-            inner
-            workings of NuttX, but I still didn't know what was required for starting my port again. At this point, I
-            remembered that I heard about a porting guide existing somewhere. I decided I would reach out on the
-            developer
-            email forum to ask for assistance in finding resources about porting NuttX. I received quite a few responses
-            very quickly, within just a few hours. Among the resources I was recommended were a Confluence page updated
-            in
-            2020 with a porting guide for NuttX, and the blog of a NuttX developer named Lup Yuen Lee, who had ported
-            NuttX
-            to the Pinephone and documented his work quite extensively. It's at this point that I am writing this entry,
-            and
-            I am now taking some time to read the porting guide and blog posts to see if it gives me a bearing on where
-            to
-            start.
-        </p>
-
-        <p></p>
-
-        <p>What information I've collected so far:</p>
-
-        <p>
-            The BCM2711 uses a quad-core Cortex-A72, 64-bit SoC at 1.5GHz. This uses the Armv8-A architecture (which I
-            gather is the same as aarch64). This information is from the
-            <a href="https://www.raspberrypi.com/documentation/computers/processors.html">Raspberry Pi Processor
-                Documentation</a>. NuttX appears to already have support for Armv8-A, under the name <code>a64</code>.
-            This significantly
-            reduces my workload. All of the <code>up_*</code>
-            functions are already written.
-        </p>
-
-        <p>
-            The BCM2711 will need an <code>irq.h</code> header defining the number of interrupts (<code>NR_IRQS</code>)
-            for that chip.
-        </p>
-
-        <p>
-            Watchdog interfaces are not implemented, and neither are some of the system timer interfaces. Nothing implemented
-            for address environments.
-        </p>
-
-        <p>Looks like SMP is implemented, not shared memory though.</p>
-
-        <h2 id="day2">Day 2: 2024-07-26</h2>
-
-        <p>
-            I had a chance to look through Lup's blog post about porting to the Pinephone, and noticed something
-            interesting. One of the supported "boards" for NuttX is an aarch64 version of QEMU. In his blog post, Lup
-            tested
-            booting on a QEMU instance with a simulated Cortex A53, both single-core and SMP. I decided to verify that
-            the
-            common code for aarch64 would work with the Cortex A72 (the BCM2711's core(s)) by booting the QEMU instance
-            using that core instead.
-        </p>
-
-        <p>
-            Following the same step from Lup's blog post, I booted the QEMU instance with the only modification being
-            the
-            selected core. Sure enough, the system booted without issue (on both single-core and SMP with 4 cores). This
-            somewhat confirms that I should not encounter too many issues regarding the use of an A72 core when
-            performing
-            my port. Of course the real test is getting a minimal boot on the real hardware. Lup had done something
-            similar
-            for the Pinephone after writing some serial support, so that is where I'll start next.
-        </p>
-
-        <h2 id="day3">Day 3: 2024-07-27</h2>
-
-        <p>
-            Reading through the article written by Lup on his serial driver, I remembered that the data sheet for the
-            BCM2711 mentions a Mini-UART which is meant for use as a console. This will be the first thing I target my
-            UART
-            driver for, so that I will have the recommended console.
-        </p>
-
-        <p>
-            Before writing the serial driver, I wanted to make sure that I could create a bootable image. There's no
-            point
-            in getting serial output ready if it can't boot!
-        </p>
-
-        <p>
-            I created a minimal <code>raspberrypi-4b:nsh</code> config under the board's <code>config/nsh</code>
-            directory,
-            copied from the Pinephone NSH config. I removed any config flags that were specific to the A64 or Pinephone
-            because I don't have them implemented for the BCM2711. I used the <code>tools/configure.sh</code>
-            script
-            with the <code>-L</code> option to confirm that my configuration showed up in the list. It did!
-        </p>
-
-        <p>
-            After this, I tried to build the new configuration to see if I was missing anything that would cause build
-            system errors. When I used <code>tools/configure.sh raspberrypi-4b:nsh</code>, I got the output that the
-            <code>Make.defs</code> file could not be found. Comparing the directory structure between my Raspberry Pi 4B
-            directory and the Pinephone's directory, I noticed that the <code>scripts</code> folder on the Pinephone
-            contained a linker script and a <code>Make.defs</code> file, which I was missing.
-        </p>
-
-        <p>
-            I added the two files to the Raspberry Pi 4B directory, directly copying from the Pinephone. I just made
-            sure to
-            change the comment headers to reflect the board name and chip (RPi 4B and BCM2711). I am not at all familiar
-            with linker scripts, so I did not modify the linker script to work with the Pi 4. I know it will need
-            modification eventually because the Raspberry Pi 4B will not have UBoot and will therefore likely need a
-            different start address, but I am leaving this task for later once I can learn more about linker scripts. In
-            the
-            meantime, I just want to try to make the build work.
-        </p>
-
-        <p>
-            After compiling, I received the error that I am missing the <code>chip.h</code> header. I once again copied
-            the
-            <code>chip.h</code> header from the <code>src/a64</code> directory in the <code>arch</code> folder to the
-            matching location in my BCM2711 source tree and tried again. Even more missing <code>chip.h</code> error
-            messages. I was missing the header file that goes in the <code>&lt;chip&gt;/include</code> directory as
-            well.
-        </p>
-
-        <p>
-            I copied the <code>include/a64/chip.h</code> header to the corresponding location on the BCM2711's source
-            tree
-            (<code>include/bcm2711/chip.h</code>) once again. I noticed that this file contains definitions for the GIC
-            interrupt controller location and the size of RAM. This is something that will most likely be different
-            between
-            the two chips. It also contained device IO base addresses and the load address for the NuttX kernel by UBoot
-            (once again, will need to be changed). I left a "TODO" comment to change these values and tried compilation
-            again.
-        </p>
-
-        <p>
-            The last thing to fix in the build errors was an undefined <code>NR_IRQS</code>. This definition is the
-            number
-            of IRQs supported by the chip, and should be defined in <code>arch/arm64/include/bcm2711/irq.h</code> (I had
-            read
-            this in the porting guide). Looking at the BCM2711 data sheet, there are 63 Videocore interrupts and 15 ARMC
-            interrupts. There are also 5 interrupts per ARM core. I assume that I need to account for all 20 (5 IRQs * 4
-            cores). That gives a total of 98 IRQs. I'm not sure if this is right, but it's good enough to get something
-            compiled.
-        </p>
-
-        <p>
-            Now we get further, but I receive the error of an implicit declaration of
-            <code>MPID_TO_CLUSTER_ID</code>. It seems this is defined in most of the arm64 <code>chip.h</code> include
-            headers, but not for the <code>a64</code>. The definition across all of the files I've seen is the same, so
-            I'll
-            copy-paste it for now and see if it works. Same for
-            <code>CONFIG_GICR_OFFSET</code>
-            (another missing symbol). This one depends on the GIC version but I'll worry about it later.
-        </p>
-
-        <p>
-            This finally seems to be the end of the errors, but now I'm told that there's no rule to make the
-            <code>dramboot.ld</code> linker script. It seems that the <code>BOARD_DIR</code> variable is not being set
-            correctly for the new Raspberry Pi 4B board directory. I found that this variable is defined in
-            <code>tools/Config.mk</code>, and is composed of the configured architecture and chip. For some reason the
-            chip
-            is being configured as QEMU, which means somewhere I have my configuration set up wrong. I double checked my
-            <code>defconfig</code> for the NSH configuration and it's not that one.
-        </p>
-
-        <p>
-            It seems that <code>CONFIG_ARCH_BOARD_CUSTOM</code> is being set when it shouldn't be. I changed the
-            generated
-            config file to specify the Raspberry Pi 4B board instead of a custom board (set to QEMU), but now I receive
-            linker errors with the arm64 common files and some <code>boardctl</code> functions. I'll need to investigate
-            the
-            root issue of the board not being set properly in the config.
-        </p>
-
-        <p>
-            I watched a <a href="https://www.youtube.com/watch?v=B7oKdUvRhQQ">lecture about linker scripts</a> to
-            determine
-            how to write a linker script for the Raspberry Pi 4B.
-        </p>
-
-        <h2 id="day4">Day 4: 2024-07-28</h2>
-
-        <p>
-            It turns out the issue with the generated configuration file that I was having earlier was because I had
-            forgotten to list the BCM2711 chip in the <code>arch/arm64/Kconfig</code> file. I discovered this by
-            comparing
-            with the Raspberry Pi Pico configuration. When I looked at the "Board Selection" menuconfig option, I
-            noticed
-            that the options listed were only boards using the RP2040 or a custom board. With the Raspberry Pi 4B
-            hand-modified config, the boards that showed up were just QEMU (one other that I forget) and custom board.
-            It
-            seemed from looking at the board selection Kconfig option that Custom Board was the default option (which
-            makes
-            sense on why that option was then being selected). I tracked down the chip option from
-            <code>arch/arm/Kconfig</code> for the RP2040, which led me to then make the appropriate modifications in
-            <code>arch/arm64/Kconfig</code>.
-        </p>
-
-        <p>
-            After learning more about linker scripts I now want to move on to changing the script for the board. I know
-            that
-            there is some SRAM and cache in the BCM2711 itself, and that the Pi 4B can come with 1, 2, 4 or 8GB of DDR
-            RAM.
-            I don't quite know how to represent this in the linker script, and I'm not sure how to describe the SD card
-            as
-            disk memory (I don't think this goes in the linker script because it is a variable size depending on what
-            the
-            person has on hand).
-        </p>
-
-        <p>
-            I have been looking at the
-            <a href="https://youtube.com/playlist?list=PLVxiWMqQvhg9FCteL7I0aohj1_YiUx1x8&si=g9Ljji1O3E8Pblua">LowLevelDevel
-                BCM2711</a>
-            for ideas about how to implement some of the hardware interaction and do a bare-metal boot of the Raspberry
-            Pi.
-        </p>
-
-        <p>
-            Instead of modifying the linker script I decided to work on some more configuration options. I made the
-            BCM2711
-            a multi-CPU chip. The Cortex A72 now also defines that it uses the GICv3. I got started a little on the Mini
-            UART interface following Lup's blog post about doing the same for the Pinephone, but I can't go further with
-            booting until I figure out the GIC addresses which are preventing me from doing so.
-        </p>
-
-        <p>
-            I looked at the GIC400 manual and confirmed with
-            <a href="https://github.com/s-matyukevich/raspberry-pi-os/issues/237">this GitHub issue I found</a> what the
-            GIC400 base address and distributor offset are. I am still not sure about the redistributor offset. I found
-            on
-            <a
-                href="https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/programmable-interrupt-controllers-a-new-architecture">this
-                documentation page</a>
-            that the GIC400 is actually GICv2 architecture. The AllWinner64 chip used for the Pinephone uses the GICv2
-            PL400. When I performed a Google search for that, I get the GIC400 results only. I will copy the
-            <code>GICR_BASE</code> definition from there for now. Same with <code>GICR_OFFSET</code>, which seems to be
-            consistent across all the implementations so far.
-        </p>
-
-        <p>
-            I ended up writing some more of the serial driver interface for the Mini UART, using the
-            <code>a64</code> implementation by Lup as a guide. Once I complete an interface for the Mini-UART, I'll move
-            on
-            to implementing some of the other missing functions the linker is complaining about. A lot of the boot
-            functions
-            I copied from the <code>a64</code> and left empty, as they involved setting up the MMU and I don't quite
-            know
-            how to do that yet. It wasn't too bad to set up most of the UART operations table for the driver since they
-            involve simple tasks (returning true if the TX FIFO is empty, etc). Setting up some of the structures for
-            device
-            registration will take some more time and thinking. I will likely need two different sets of UART ops, one
-            for
-            the Mini UART and the other for the regular UART interfaces.
-        </p>
-
-        <p>
-            I got most of the implementation for the Mini UART serial driver complete except for the interrupts. I will
-            complete that later once I can get some more of the project compiled. The next thing preventing compilation
-            is
-            the board initialization function, which must be added in the Raspberry Pi 4B board source tree. I will just
-            implement a stub for now since I'm more concerned about just booting and seeing a UART output first.
-        </p>
-
-        <p>
-            After adding the board initialization stub, I am onto the next linker error: missing
-            <code>g_mmu_config</code>. This one is actually going to take some effort since the MMU will likely need to
-            be
-            set up properly in order to boot. I have to read about the MMU for the ARM Cortex A72.
-        </p>
-
-        <p>
-            In doing so, I stumbled across
-            <a href="https://github.com/babbleberry/rpi4-osdev">a tutorial for writing an RPi 4B OS</a>. I am going to
-            read
-            through it and see if I learn anything useful for porting.
-        </p>
-
-        <p>
-            It turns out that I can still compile with an empty <code>g_mmu_regions</code> variable, so I am now writing
-            the
-            <code>board_app_initialize</code> function which is the next linker error. I am once again using the
-            Pinephone
-            implementation as a guide. With those stubs implemented, the build fully compiles into an executable and a
-            <code>.bin</code> file. This is great sign, because now I have a list of "TODO" comments scattered in places
-            where I need to implement features to actually get this image running.
-        </p>
-
-        <p>
-            Just to test the debug output, I uploaded the required files to an SD card (<code>config.txt</code>,
-            <code>fixup4.dat</code>, etc) with the debug UART enabled. This way I could see if the Pi would run it's
-            initial
-            bootloader and recognize the generated <code>nuttx.bin</code> file (even though I know it won't work). Sure
-            enough, I was able to boot the Pi and the debug output showed that <code>nuttx.bin</code> was correctly
-            loaded
-            as the kernel. Nothing else happened, however. I need to finish implementing some NuttX interfaces.
-        </p>
-
-        <p>
-            Reading through Lup Yuen's blogs again, I see that the common logic for arm64 calls a
-            <code>PRINT</code> macro during the initial boot sequence. It needs an <code>up_lowputc</code> function to
-            be
-            defined in order to work, which I haven't defined for the BCM2711. Implementing that next would help see the
-            boot output.
-        </p>
-
-        <p>
-            After implementing the lowputc functions required for the <code>PRINT</code> macro (in C, not assembly), I
-            re-configured the nsh preset defconfig to use <code>ARCH_EARLY_PRINT</code>. I didn't receive any errors
-            when
-            re-building, so I tried copying the binary to the SD card and booting the Pi again, just in case I would see
-            something. No luck still, which means something is surely wrong with how the binary is being loaded.
-        </p>
-
-        <h2 id="day5">Day 5: 2024-07-29</h2>
-
-        <p>
-            I noticed while reading through the Raspberry Pi OS tutorial that my base addresses for the peripherals were
-            using the legacy addressing mode on the BCM2711. I need to change this to be configurable. I now allow the
-            peripheral base to be selected based on configuration options (not included in Kconfig files yet), and add
-            the
-            other offsets to this base. Maybe this will allow the early print to run (as I was booting in 35-bit
-            addressing
-            mode but using the legacy addressing).
-        </p>
-
-        <p>
-            Reading through Lup's blogs again, I read his post about the A64 interrupt controller being a GICv2
-            controller.
-            It turns out that the <code>GICR</code> address is actually the GIC CPU Interface address, so I had this
-            address
-            correct.
-        </p>
-
-        <p>
-            I will likely need some post-build logic in order to create a proper <code>config.txt</code> file for the
-            NuttX
-            image. There are lots of boot options that get specified in <code>config.txt</code>. I saw that the RP2040
-            has a
-            post-build <code>Config.mk</code> file for generating a <code>.uf2</code> file for NuttX. I can do the same
-            for
-            the Raspberry Pi's <code>config.txt</code>. I also saw in the rpi4-osdev Makefile that
-            <code>aarch64-none-elf-objcopy</code> is used to create a <code>.img</code> file from the output binary in
-            order
-            to be loaded as the kernel. I'll add this conversion step to the post-build as well.
-        </p>
-
-        <p>
-            I added the boiler plate for a post build generation of the <code>config.txt</code> file (just an echo
-            message
-            for now), and also created the boiler plate files for the RPi 4B's port documentation on the NuttX website.
-        </p>
-
-        <h2 id="day6">Day 6: 2024-07-30</h2>
-        <p> It's clear from my attempts at booting with early printing enabled that I'm not going to get very far unless
-            I actually gain an understanding of the boot process on the Pi and within NuttX. I've tried a few different
-            things cobbled together from online tutorials, guides and hardware manuals, but since none of them
-            miraculously worked, I need to try again with a better understanding.
-        </p>
-
-        <p>
-            I've downloaded a copy of the ARMv8 Programmer's Guide on my eReader, and I hope to finish reading that on
-            my
-            commutes to work so I can get a better understanding of the aarch64 architecture. In the meantime, I've also
-            got
-            access to all the public information from Broadcom about the BCM2711 (which I've finished reading, so that's
-            checked off), which isn't much. I should probably start with reading the <code>common</code>
-            source files for the NuttX aarch64 implementation so I can see what happens at boot.
-        </p>
-
-        <p>What I don't understand is:</p>
-        <ul>
-            <li>How to configure the MMU</li>
-            <li>If my linker script is done properly</li>
-            <li>How to configure interrupts properly</li>
-            <li>How the NuttX boot process works</li>
-        </ul>
-
-        <p>
-            Once I can figure these things out, I should be better equipped to get something that prints UART output up
-            and
-            running. Then I can worry about secondary things like writing device drivers for the board hardware, testing
-            if
-            SMP works out of the box (like it did for QEMU) and if I should bother supporting things like the 32-bit
-            execution mode for the processor.
-        </p>
-
-        <p>
-            I looked a Lup's blog which has a call graph of the aarch64 boot sequence on NuttX. Everything starts at
-            <code>arm64_head.S</code>, which is where I'll look first.
-        </p>
-
-        <p>
-            The start requirements are that MMU, D-cache and I-cache must be disabled. I will have to check to make sure
-            that the Raspberry Pi 4B <code>start.elf</code> does not enable these. From skimming online it appears not,
-            but
-            I am unsure. The <code>arm64_earlyprintinit</code> function and <code>arm64_lowputc</code> functions are
-            called
-            very early in the start code. It seems other implementations are doing straight register manipulations and
-            not
-            using any variables in their <code>lowputc</code> logic, which is something I didn't adhere to in my
-            original
-            implementation. I am going to try changing that and seeing if I can get serial output this time around.
-        </p>
-
-        <p>
-            I have re-written the serial driver implementation and I can confirm that some garbled serial output is
-            appearing (not a success, nothing is decipherable). I opted to turn GPIO26 high in my
-            <code>arm64_earlyprintinit</code> function so I could get that as an indication of booting. The GPIO pin
-            does go
-            high, which indicates to me that the <code>arm64_earlyprintinit</code> function is being called correctly.
-            Something is wrong with my UART configuration.
-        </p>
-
-        <p>
-            After trying out some more things, namely compiling the "kernel" from the
-            <code>rpi4-osdev</code> project with the NuttX linker script and running it (no issues), I discovered
-            something
-            interesting. I tried calling some register write functions to print the message "hi" via the Mini UART
-            transmit
-            register. I knew the FIFO would have enough space on reset to hold at least those four characters (hi +
-            newline
-            and carriage return). Sure enough, on boot, "hi" appeared on the UART lines, followed by the same garbled
-            output
-            I had witnessed earlier. This is interesting, and it means that the <code>char</code> parameter being passed
-            to
-            the <code>arm64_lowputc</code> function is pointing to garbage memory. This makes me wonder if I'm not
-            setting
-            up stack memory properly in the linker script. It's time to have another look at the linker script.
-        </p>
-
-        <p>
-            In a desperate attempt for a quick solution, I tried modifying the <code>dramboot.ld</code>
-            script that the Allwinner 64 used to just have a different load address of 0x8000 (where
-            <code>start.elf</code> loads the kernel). I booted this image, and I'm no worse off but no better off; "hi"
-            still appears but it's followed by garbled output again.
-        </p>
-
-        <p>
-            It seems that within the <code>arm64_earlyprint</code> function I can make multiple calls to
-            <code>arm64_lowputc</code> and they print successfully. If I do the same in a for-loop with a string,
-            calling
-            <code>arm64_lowputc</code> for each character, it does not. I should check if the compiler is optimizing
-            away
-            the function calls into individual invocations with the raw character, but the string scenario cannot be
-            optimized the same way hence it failing. There are two prior implementations of <code>lowputc</code> in C
-            from
-            the imx8 and imx9 chips, but the other implementations are all in assembly. I wonder if that has something
-            to do
-            with it. I need to know a way around this issue with the <code>char ch</code> parameter.
-        </p>
-
-        <p>
-            After some more experimentation, I discovered that I can call <code>arm64_lowputc</code> from the assembly
-            startup without any problems. My example code right after <code>arm64_earlyprintinit</code> was:
-        </p>
-
-        <pre><code>mov w0, 'h'
+      <h1>Porting NuttX to the Raspberry Pi 4B</h1>
+      <p>
+        When I was getting into RTOSs, the first RTOS I experimented with was
+        Blackberry's QNX. It's a microkernel, POSIX compliant, real-time
+        operating system for embedded applications. However, I discovered soon
+        after that its microkernel and security features came with the
+        requirement of a system with a MMU. The only hobbyist device that QNX
+        ran on at the time was a Raspberry Pi 4B, which for my application of a
+        rocketry flight computer, wasn't exactly the low-power, small form
+        factor device I was looking for. It was at that point where I starting
+        exploring alternatives, and came across
+        <a href="https://nuttx.apache.org/"> Apache NuttX </a>
+        , which was scalable from 8 bit to 64 bit systems, and could run in
+        sometimes as little as 16KB of flash!
+      </p>
+      <p>
+        Although NuttX came with support for so many cheap, hobbyist boards, I
+        noticed that it was missing support for the Raspberry Pi 4B. I was
+        interested to see if I could port NuttX to the Pi and run my old, POSIX
+        compliant software that was already written for QNX on it. I knew the Pi
+        4B was a popular hobbyist board, and also came with a lot of great
+        peripherals that could be useful for benchmarking NuttX and trying out
+        all its different features. I also knew that NuttX already had support
+        for the ARMv8-A architecture, so I had some groundwork already laid out
+        for me. Thus began the endeavour of adding support for the BCM2711 on
+        NuttX.
+      </p>
+      <p>
+        Most of the documentation about the BCM2711 online comes from a
+        <a
+          href="https://datasheets.raspberrypi.com/bcm2711/bcm2711-peripherals.pdf"
+        >
+          peripheral datasheet released by Raspberry Pi
+        </a>
+        (which does not cover many of the peripherals already on the Pi 4B). I
+        wanted to try to document my process a little bit to both make it easier
+        for NuttX contributors to do future ports, and also to add a little more
+        documentation about the BCM2711 online. There were not many resources
+        about bare-metal programming the Pi 4B outside of the few I stumbled on
+        (such as the
+        <a href="https://github.com/babbleberry/rpi4-osdev"> rpi4-osdev </a>
+        project).
+      </p>
+      <p>
+        Below are the journal entries I made while undergoing the port. I have
+        also included a more refined version of these notes in the
+        <a href="https://nuttx.apache.org/docs/latest/guides/port.html">
+          NuttX guides documentation
+        </a>
+        , but I wrote out all this information to be of use, so I may as well
+        post it somewhere accessible. You can also see the
+        <a href="https://github.com/apache/nuttx/pull/15188">
+          initial support pull request to the NuttX kernel here
+        </a>
+        . While you read,
+        <strong>
+          please remember that I was learning along the way while writing these
+          entries, and some of the assumptions or statements I make about
+          existing NuttX functionality and the BCM2711 may be misinformed,
+          incorrect, or no longer true.
+        </strong>
+        Hopefully these entries are of some utility!
+      </p>
+      <h3>Table of Contents</h3>
+      <ul style="display: flex; gap: 4rem; text-transform: uppercase">
+        <div>
+          <li>
+            <a href="#day1"> Day 1 </a>
+          </li>
+          <li>
+            <a href="#day2"> Day 2 </a>
+          </li>
+          <li>
+            <a href="#day3"> Day 3 </a>
+          </li>
+          <li>
+            <a href="#day4"> Day 4 </a>
+          </li>
+          <li>
+            <a href="#day5"> Day 5 </a>
+          </li>
+          <li>
+            <a href="#day6"> Day 6 </a>
+          </li>
+          <li>
+            <a href="#day7"> Day 7 </a>
+          </li>
+        </div>
+        <div>
+          <li>
+            <a href="#day8"> Day 8 </a>
+          </li>
+          <li>
+            <a href="#day9"> Day 9 </a>
+          </li>
+          <li>
+            <a href="#day10"> Day 10 </a>
+          </li>
+          <li>
+            <a href="#day11"> Day 11 </a>
+          </li>
+          <li>
+            <a href="#day12"> Day 12 </a>
+          </li>
+          <li>
+            <a href="#day13"> Day 13 </a>
+          </li>
+          <li>
+            <a href="#day14"> Day 14 </a>
+          </li>
+        </div>
+      </ul>
+      <h2 id="day1">Day 1: 2024-07-25</h2>
+      <p>
+        I am beginning work on porting NuttX to the Raspberry Pi 4B. I had
+        originally been using QNX on this platform, but after learning about
+        NuttX and the range of different systems it supports, I wanted to start
+        experimenting with it instead. Unfortunately the Raspberry Pi 4B was not
+        one of the systems with existing NuttX support. I thought it would make
+        a nice development board because it's very densely featured.
+      </p>
+      <p>
+        I first checked the NuttX issues listing in case someone else had
+        already begun work on the port. I found an existing issue which
+        referenced Gregory Nutt's previous work on a port, but at the time he
+        was writing it for the BCM2708 (and the BCM2835) chip. The Raspberry Pi
+        4B uses a BCM2711, so I would be able to use his prior work as a
+        reference point but not as a completely started implementation.
+      </p>
+      <p>
+        I initially began with researching the BCM2711 chip. I knew from prior
+        experience that is was part of the aarch64 architecture. Looking at the
+        data sheet provided by Raspberry Pi, I learned about the different
+        available interfaces and their register interfaces. I looked through
+        Gregory's previous work and the source code for the RP2040
+        implementation on NuttX (because of prior familiarity), and saw that
+        there were quite a few headers defined for the memory map, register
+        locations and bit masks for accessing the different sections of each
+        register. This seemed like the logical place to start for me, because I
+        would need to be able to access all the different registers in order to
+        do anything with the chip. I began creating these header files in a
+        similar style to what I had already seen done:
+      </p>
+      <ul>
+        <li>
+          <code> bcm2711_armtimer.h </code>
+        </li>
+        <li>
+          <code> bcm2711_aux.h </code>
+        </li>
+        <li>
+          <code> bcm2711_bsc.h </code>
+        </li>
+        <li>
+          <code> bcm2711_dma.h </code>
+        </li>
+        <li>
+          <code> bcm2711_gpclk.h </code>
+        </li>
+        <li>
+          <code> bcm2711_gpio.h </code>
+        </li>
+        <li>
+          <code> bcm2711_irq.h </code>
+        </li>
+        <li>
+          <code> bcm2711_mailbox.h </code>
+        </li>
+        <li>
+          <code> bcm2711_memmap.h </code>
+        </li>
+        <li>
+          <code> bcm2711_pcm.h </code>
+        </li>
+        <li>
+          <code> bcm2711_pwm.h </code>
+        </li>
+        <li>
+          <code> bcm2711_spi.h </code>
+        </li>
+        <li>
+          <code> bcm2711_systimer.h </code>
+        </li>
+        <li>
+          <code> bcm2711_uart.h </code>
+        </li>
+      </ul>
+      <p>
+        The memory map header contained base addresses for each of the different
+        interfaces that I had seen listed in the datasheet. Then, I created a
+        header file for each section of the data sheet (covering a different
+        interface) in which I defined the register addresses for the interface
+        by using the base address + some offset. Once I had all the registers
+        listed, I also created bitmasks for all of the individual parts of each
+        register. Some registers just contained 32 bit numbers or were intended
+        to be accessed as a single 32-bit word, so I did not create masks for
+        those.
+      </p>
+      <p>
+        Once I had completed this copying work into header files, I took a look
+        through Gregory's prior implementation and started getting unsure of
+        where to start. There are a lot of interfaces to implement for NuttX,
+        and I wasn't quite sure which ones needed to be implemented first to
+        build off of. I decided that this was probably because I was still
+        relatively new to NuttX, and I would need to read through the
+        documentation to get a better grasp of the inner workings of the kernel.
+      </p>
+      <a href="https://nuttx.apache.org/docs/latest/">
+        NuttX Documentation Website
+      </a>
+      <p>
+        I ended up reading through quite a bit of the NuttX website's
+        documentation page; parts of the "OS Components" section and all of the
+        "Implementation Details" section. After reading these, I did learn more
+        about the inner workings of NuttX, but I still didn't know what was
+        required for starting my port again. At this point, I remembered that I
+        heard about a porting guide existing somewhere. I decided I would reach
+        out on the developer email forum to ask for assistance in finding
+        resources about porting NuttX. I received quite a few responses very
+        quickly, within just a few hours. Among the resources I was recommended
+        were a Confluence page updated in 2020 with a porting guide for NuttX,
+        and the blog of a NuttX developer named Lup Yuen Lee, who had ported
+        NuttX to the Pinephone and documented his work quite extensively. It's
+        at this point that I am writing this entry, and I am now taking some
+        time to read the porting guide and blog posts to see if it gives me a
+        bearing on where to start.
+      </p>
+      <p></p>
+      <p>What information I've collected so far:</p>
+      <p>
+        The BCM2711 uses a quad-core Cortex-A72, 64-bit SoC at 1.5GHz. This uses
+        the Armv8-A architecture (which I gather is the same as aarch64). This
+        information is from the
+        <a
+          href="https://www.raspberrypi.com/documentation/computers/processors.html"
+        >
+          Raspberry Pi Processor Documentation
+        </a>
+        . NuttX appears to already have support for Armv8-A, under the name
+        <code> a64 </code>
+        . This significantly reduces my workload. All of the
+        <code> up_* </code>
+        functions are already written.
+      </p>
+      <p>
+        The BCM2711 will need an
+        <code> irq.h </code>
+        header defining the number of interrupts (
+        <code> NR_IRQS </code>
+        ) for that chip.
+      </p>
+      <p>
+        Watchdog interfaces are not implemented, and neither are some of the
+        system timer interfaces. Nothing implemented for address environments.
+      </p>
+      <p>Looks like SMP is implemented, not shared memory though.</p>
+      <h2 id="day2">Day 2: 2024-07-26</h2>
+      <p>
+        I had a chance to look through Lup's blog post about porting to the
+        Pinephone, and noticed something interesting. One of the supported
+        "boards" for NuttX is an aarch64 version of QEMU. In his blog post, Lup
+        tested booting on a QEMU instance with a simulated Cortex A53, both
+        single-core and SMP. I decided to verify that the common code for
+        aarch64 would work with the Cortex A72 (the BCM2711's core(s)) by
+        booting the QEMU instance using that core instead.
+      </p>
+      <p>
+        Following the same step from Lup's blog post, I booted the QEMU instance
+        with the only modification being the selected core. Sure enough, the
+        system booted without issue (on both single-core and SMP with 4 cores).
+        This somewhat confirms that I should not encounter too many issues
+        regarding the use of an A72 core when performing my port. Of course the
+        real test is getting a minimal boot on the real hardware. Lup had done
+        something similar for the Pinephone after writing some serial support,
+        so that is where I'll start next.
+      </p>
+      <h2 id="day3">Day 3: 2024-07-27</h2>
+      <p>
+        Reading through the article written by Lup on his serial driver, I
+        remembered that the data sheet for the BCM2711 mentions a Mini-UART
+        which is meant for use as a console. This will be the first thing I
+        target my UART driver for, so that I will have the recommended console.
+      </p>
+      <p>
+        Before writing the serial driver, I wanted to make sure that I could
+        create a bootable image. There's no point in getting serial output ready
+        if it can't boot!
+      </p>
+      <p>
+        I created a minimal
+        <code> raspberrypi-4b:nsh </code>
+        config under the board's
+        <code> config/nsh </code>
+        directory, copied from the Pinephone NSH config. I removed any config
+        flags that were specific to the A64 or Pinephone because I don't have
+        them implemented for the BCM2711. I used the
+        <code> tools/configure.sh </code>
+        script with the
+        <code> -L </code>
+        option to confirm that my configuration showed up in the list. It did!
+      </p>
+      <p>
+        After this, I tried to build the new configuration to see if I was
+        missing anything that would cause build system errors. When I used
+        <code> tools/configure.sh raspberrypi-4b:nsh </code>
+        , I got the output that the
+        <code> Make.defs </code>
+        file could not be found. Comparing the directory structure between my
+        Raspberry Pi 4B directory and the Pinephone's directory, I noticed that
+        the
+        <code> scripts </code>
+        folder on the Pinephone contained a linker script and a
+        <code> Make.defs </code>
+        file, which I was missing.
+      </p>
+      <p>
+        I added the two files to the Raspberry Pi 4B directory, directly copying
+        from the Pinephone. I just made sure to change the comment headers to
+        reflect the board name and chip (RPi 4B and BCM2711). I am not at all
+        familiar with linker scripts, so I did not modify the linker script to
+        work with the Pi 4. I know it will need modification eventually because
+        the Raspberry Pi 4B will not have UBoot and will therefore likely need a
+        different start address, but I am leaving this task for later once I can
+        learn more about linker scripts. In the meantime, I just want to try to
+        make the build work.
+      </p>
+      <p>
+        After compiling, I received the error that I am missing the
+        <code> chip.h </code>
+        header. I once again copied the
+        <code> chip.h </code>
+        header from the
+        <code> src/a64 </code>
+        directory in the
+        <code> arch </code>
+        folder to the matching location in my BCM2711 source tree and tried
+        again. Even more missing
+        <code> chip.h </code>
+        error messages. I was missing the header file that goes in the
+        <code> &lt;chip&gt;/include </code>
+        directory as well.
+      </p>
+      <p>
+        I copied the
+        <code> include/a64/chip.h </code>
+        header to the corresponding location on the BCM2711's source tree (
+        <code> include/bcm2711/chip.h </code>
+        ) once again. I noticed that this file contains definitions for the GIC
+        interrupt controller location and the size of RAM. This is something
+        that will most likely be different between the two chips. It also
+        contained device IO base addresses and the load address for the NuttX
+        kernel by UBoot (once again, will need to be changed). I left a "TODO"
+        comment to change these values and tried compilation again.
+      </p>
+      <p>
+        The last thing to fix in the build errors was an undefined
+        <code> NR_IRQS </code>
+        . This definition is the number of IRQs supported by the chip, and
+        should be defined in
+        <code> arch/arm64/include/bcm2711/irq.h </code>
+        (I had read this in the porting guide). Looking at the BCM2711 data
+        sheet, there are 63 Videocore interrupts and 15 ARMC interrupts. There
+        are also 5 interrupts per ARM core. I assume that I need to account for
+        all 20 (5 IRQs * 4 cores). That gives a total of 98 IRQs. I'm not sure
+        if this is right, but it's good enough to get something compiled.
+      </p>
+      <p>
+        Now we get further, but I receive the error of an implicit declaration
+        of
+        <code> MPID_TO_CLUSTER_ID </code>
+        . It seems this is defined in most of the arm64
+        <code> chip.h </code>
+        include headers, but not for the
+        <code> a64 </code>
+        . The definition across all of the files I've seen is the same, so I'll
+        copy-paste it for now and see if it works. Same for
+        <code> CONFIG_GICR_OFFSET </code>
+        (another missing symbol). This one depends on the GIC version but I'll
+        worry about it later.
+      </p>
+      <p>
+        This finally seems to be the end of the errors, but now I'm told that
+        there's no rule to make the
+        <code> dramboot.ld </code>
+        linker script. It seems that the
+        <code> BOARD_DIR </code>
+        variable is not being set correctly for the new Raspberry Pi 4B board
+        directory. I found that this variable is defined in
+        <code> tools/Config.mk </code>
+        , and is composed of the configured architecture and chip. For some
+        reason the chip is being configured as QEMU, which means somewhere I
+        have my configuration set up wrong. I double checked my
+        <code> defconfig </code>
+        for the NSH configuration and it's not that one.
+      </p>
+      <p>
+        It seems that
+        <code> CONFIG_ARCH_BOARD_CUSTOM </code>
+        is being set when it shouldn't be. I changed the generated config file
+        to specify the Raspberry Pi 4B board instead of a custom board (set to
+        QEMU), but now I receive linker errors with the arm64 common files and
+        some
+        <code> boardctl </code>
+        functions. I'll need to investigate the root issue of the board not
+        being set properly in the config.
+      </p>
+      <p>
+        I watched a
+        <a href="https://www.youtube.com/watch?v=B7oKdUvRhQQ">
+          lecture about linker scripts
+        </a>
+        to determine how to write a linker script for the Raspberry Pi 4B.
+      </p>
+      <h2 id="day4">Day 4: 2024-07-28</h2>
+      <p>
+        It turns out the issue with the generated configuration file that I was
+        having earlier was because I had forgotten to list the BCM2711 chip in
+        the
+        <code> arch/arm64/Kconfig </code>
+        file. I discovered this by comparing with the Raspberry Pi Pico
+        configuration. When I looked at the "Board Selection" menuconfig option,
+        I noticed that the options listed were only boards using the RP2040 or a
+        custom board. With the Raspberry Pi 4B hand-modified config, the boards
+        that showed up were just QEMU (one other that I forget) and custom
+        board. It seemed from looking at the board selection Kconfig option that
+        Custom Board was the default option (which makes sense on why that
+        option was then being selected). I tracked down the chip option from
+        <code> arch/arm/Kconfig </code>
+        for the RP2040, which led me to then make the appropriate modifications
+        in
+        <code> arch/arm64/Kconfig </code>
+        .
+      </p>
+      <p>
+        After learning more about linker scripts I now want to move on to
+        changing the script for the board. I know that there is some SRAM and
+        cache in the BCM2711 itself, and that the Pi 4B can come with 1, 2, 4 or
+        8GB of DDR RAM. I don't quite know how to represent this in the linker
+        script, and I'm not sure how to describe the SD card as disk memory (I
+        don't think this goes in the linker script because it is a variable size
+        depending on what the person has on hand).
+      </p>
+      <p>
+        I have been looking at the
+        <a
+          href="https://youtube.com/playlist?list=PLVxiWMqQvhg9FCteL7I0aohj1_YiUx1x8&amp;si=g9Ljji1O3E8Pblua"
+        >
+          LowLevelDevel BCM2711
+        </a>
+        for ideas about how to implement some of the hardware interaction and do
+        a bare-metal boot of the Raspberry Pi.
+      </p>
+      <p>
+        Instead of modifying the linker script I decided to work on some more
+        configuration options. I made the BCM2711 a multi-CPU chip. The Cortex
+        A72 now also defines that it uses the GICv3. I got started a little on
+        the Mini UART interface following Lup's blog post about doing the same
+        for the Pinephone, but I can't go further with booting until I figure
+        out the GIC addresses which are preventing me from doing so.
+      </p>
+      <p>
+        I looked at the GIC400 manual and confirmed with
+        <a href="https://github.com/s-matyukevich/raspberry-pi-os/issues/237">
+          this GitHub issue I found
+        </a>
+        what the GIC400 base address and distributor offset are. I am still not
+        sure about the redistributor offset. I found on
+        <a
+          href="https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/programmable-interrupt-controllers-a-new-architecture"
+        >
+          this documentation page
+        </a>
+        that the GIC400 is actually GICv2 architecture. The AllWinner64 chip
+        used for the Pinephone uses the GICv2 PL400. When I performed a Google
+        search for that, I get the GIC400 results only. I will copy the
+        <code> GICR_BASE </code>
+        definition from there for now. Same with
+        <code> GICR_OFFSET </code>
+        , which seems to be consistent across all the implementations so far.
+      </p>
+      <p>
+        I ended up writing some more of the serial driver interface for the Mini
+        UART, using the
+        <code> a64 </code>
+        implementation by Lup as a guide. Once I complete an interface for the
+        Mini-UART, I'll move on to implementing some of the other missing
+        functions the linker is complaining about. A lot of the boot functions I
+        copied from the
+        <code> a64 </code>
+        and left empty, as they involved setting up the MMU and I don't quite
+        know how to do that yet. It wasn't too bad to set up most of the UART
+        operations table for the driver since they involve simple tasks
+        (returning true if the TX FIFO is empty, etc). Setting up some of the
+        structures for device registration will take some more time and
+        thinking. I will likely need two different sets of UART ops, one for the
+        Mini UART and the other for the regular UART interfaces.
+      </p>
+      <p>
+        I got most of the implementation for the Mini UART serial driver
+        complete except for the interrupts. I will complete that later once I
+        can get some more of the project compiled. The next thing preventing
+        compilation is the board initialization function, which must be added in
+        the Raspberry Pi 4B board source tree. I will just implement a stub for
+        now since I'm more concerned about just booting and seeing a UART output
+        first.
+      </p>
+      <p>
+        After adding the board initialization stub, I am onto the next linker
+        error: missing
+        <code> g_mmu_config </code>
+        . This one is actually going to take some effort since the MMU will
+        likely need to be set up properly in order to boot. I have to read about
+        the MMU for the ARM Cortex A72.
+      </p>
+      <p>
+        In doing so, I stumbled across
+        <a href="https://github.com/babbleberry/rpi4-osdev">
+          a tutorial for writing an RPi 4B OS
+        </a>
+        . I am going to read through it and see if I learn anything useful for
+        porting.
+      </p>
+      <p>
+        It turns out that I can still compile with an empty
+        <code> g_mmu_regions </code>
+        variable, so I am now writing the
+        <code> board_app_initialize </code>
+        function which is the next linker error. I am once again using the
+        Pinephone implementation as a guide. With those stubs implemented, the
+        build fully compiles into an executable and a
+        <code> .bin </code>
+        file. This is great sign, because now I have a list of "TODO" comments
+        scattered in places where I need to implement features to actually get
+        this image running.
+      </p>
+      <p>
+        Just to test the debug output, I uploaded the required files to an SD
+        card (
+        <code> config.txt </code>
+        ,
+        <code> fixup4.dat </code>
+        , etc) with the debug UART enabled. This way I could see if the Pi would
+        run it's initial bootloader and recognize the generated
+        <code> nuttx.bin </code>
+        file (even though I know it won't work). Sure enough, I was able to boot
+        the Pi and the debug output showed that
+        <code> nuttx.bin </code>
+        was correctly loaded as the kernel. Nothing else happened, however. I
+        need to finish implementing some NuttX interfaces.
+      </p>
+      <p>
+        Reading through Lup Yuen's blogs again, I see that the common logic for
+        arm64 calls a
+        <code> PRINT </code>
+        macro during the initial boot sequence. It needs an
+        <code> up_lowputc </code>
+        function to be defined in order to work, which I haven't defined for the
+        BCM2711. Implementing that next would help see the boot output.
+      </p>
+      <p>
+        After implementing the lowputc functions required for the
+        <code> PRINT </code>
+        macro (in C, not assembly), I re-configured the nsh preset defconfig to
+        use
+        <code> ARCH_EARLY_PRINT </code>
+        . I didn't receive any errors when re-building, so I tried copying the
+        binary to the SD card and booting the Pi again, just in case I would see
+        something. No luck still, which means something is surely wrong with how
+        the binary is being loaded.
+      </p>
+      <h2 id="day5">Day 5: 2024-07-29</h2>
+      <p>
+        I noticed while reading through the Raspberry Pi OS tutorial that my
+        base addresses for the peripherals were using the legacy addressing mode
+        on the BCM2711. I need to change this to be configurable. I now allow
+        the peripheral base to be selected based on configuration options (not
+        included in Kconfig files yet), and add the other offsets to this base.
+        Maybe this will allow the early print to run (as I was booting in 35-bit
+        addressing mode but using the legacy addressing).
+      </p>
+      <p>
+        Reading through Lup's blogs again, I read his post about the A64
+        interrupt controller being a GICv2 controller. It turns out that the
+        <code> GICR </code>
+        address is actually the GIC CPU Interface address, so I had this address
+        correct.
+      </p>
+      <p>
+        I will likely need some post-build logic in order to create a proper
+        <code> config.txt </code>
+        file for the NuttX image. There are lots of boot options that get
+        specified in
+        <code> config.txt </code>
+        . I saw that the RP2040 has a post-build
+        <code> Config.mk </code>
+        file for generating a
+        <code> .uf2 </code>
+        file for NuttX. I can do the same for the Raspberry Pi's
+        <code> config.txt </code>
+        . I also saw in the rpi4-osdev Makefile that
+        <code> aarch64-none-elf-objcopy </code>
+        is used to create a
+        <code> .img </code>
+        file from the output binary in order to be loaded as the kernel. I'll
+        add this conversion step to the post-build as well.
+      </p>
+      <p>
+        I added the boiler plate for a post build generation of the
+        <code> config.txt </code>
+        file (just an echo message for now), and also created the boiler plate
+        files for the RPi 4B's port documentation on the NuttX website.
+      </p>
+      <h2 id="day6">Day 6: 2024-07-30</h2>
+      <p>
+        It's clear from my attempts at booting with early printing enabled that
+        I'm not going to get very far unless I actually gain an understanding of
+        the boot process on the Pi and within NuttX. I've tried a few different
+        things cobbled together from online tutorials, guides and hardware
+        manuals, but since none of them miraculously worked, I need to try again
+        with a better understanding.
+      </p>
+      <p>
+        I've downloaded a copy of the ARMv8 Programmer's Guide on my eReader,
+        and I hope to finish reading that on my commutes to work so I can get a
+        better understanding of the aarch64 architecture. In the meantime, I've
+        also got access to all the public information from Broadcom about the
+        BCM2711 (which I've finished reading, so that's checked off), which
+        isn't much. I should probably start with reading the
+        <code> common </code>
+        source files for the NuttX aarch64 implementation so I can see what
+        happens at boot.
+      </p>
+      <p>What I don't understand is:</p>
+      <ul>
+        <li>How to configure the MMU</li>
+        <li>If my linker script is done properly</li>
+        <li>How to configure interrupts properly</li>
+        <li>How the NuttX boot process works</li>
+      </ul>
+      <p>
+        Once I can figure these things out, I should be better equipped to get
+        something that prints UART output up and running. Then I can worry about
+        secondary things like writing device drivers for the board hardware,
+        testing if SMP works out of the box (like it did for QEMU) and if I
+        should bother supporting things like the 32-bit execution mode for the
+        processor.
+      </p>
+      <p>
+        I looked a Lup's blog which has a call graph of the aarch64 boot
+        sequence on NuttX. Everything starts at
+        <code> arm64_head.S </code>
+        , which is where I'll look first.
+      </p>
+      <p>
+        The start requirements are that MMU, D-cache and I-cache must be
+        disabled. I will have to check to make sure that the Raspberry Pi 4B
+        <code> start.elf </code>
+        does not enable these. From skimming online it appears not, but I am
+        unsure. The
+        <code> arm64_earlyprintinit </code>
+        function and
+        <code> arm64_lowputc </code>
+        functions are called very early in the start code. It seems other
+        implementations are doing straight register manipulations and not using
+        any variables in their
+        <code> lowputc </code>
+        logic, which is something I didn't adhere to in my original
+        implementation. I am going to try changing that and seeing if I can get
+        serial output this time around.
+      </p>
+      <p>
+        I have re-written the serial driver implementation and I can confirm
+        that some garbled serial output is appearing (not a success, nothing is
+        decipherable). I opted to turn GPIO26 high in my
+        <code> arm64_earlyprintinit </code>
+        function so I could get that as an indication of booting. The GPIO pin
+        does go high, which indicates to me that the
+        <code> arm64_earlyprintinit </code>
+        function is being called correctly. Something is wrong with my UART
+        configuration.
+      </p>
+      <p>
+        After trying out some more things, namely compiling the "kernel" from
+        the
+        <code> rpi4-osdev </code>
+        project with the NuttX linker script and running it (no issues), I
+        discovered something interesting. I tried calling some register write
+        functions to print the message "hi" via the Mini UART transmit register.
+        I knew the FIFO would have enough space on reset to hold at least those
+        four characters (hi + newline and carriage return). Sure enough, on
+        boot, "hi" appeared on the UART lines, followed by the same garbled
+        output I had witnessed earlier. This is interesting, and it means that
+        the
+        <code> char </code>
+        parameter being passed to the
+        <code> arm64_lowputc </code>
+        function is pointing to garbage memory. This makes me wonder if I'm not
+        setting up stack memory properly in the linker script. It's time to have
+        another look at the linker script.
+      </p>
+      <p>
+        In a desperate attempt for a quick solution, I tried modifying the
+        <code> dramboot.ld </code>
+        script that the Allwinner 64 used to just have a different load address
+        of 0x8000 (where
+        <code> start.elf </code>
+        loads the kernel). I booted this image, and I'm no worse off but no
+        better off; "hi" still appears but it's followed by garbled output
+        again.
+      </p>
+      <p>
+        It seems that within the
+        <code> arm64_earlyprint </code>
+        function I can make multiple calls to
+        <code> arm64_lowputc </code>
+        and they print successfully. If I do the same in a for-loop with a
+        string, calling
+        <code> arm64_lowputc </code>
+        for each character, it does not. I should check if the compiler is
+        optimizing away the function calls into individual invocations with the
+        raw character, but the string scenario cannot be optimized the same way
+        hence it failing. There are two prior implementations of
+        <code> lowputc </code>
+        in C from the imx8 and imx9 chips, but the other implementations are all
+        in assembly. I wonder if that has something to do with it. I need to
+        know a way around this issue with the
+        <code> char ch </code>
+        parameter.
+      </p>
+      <p>
+        After some more experimentation, I discovered that I can call
+        <code> arm64_lowputc </code>
+        from the assembly startup without any problems. My example code right
+        after
+        <code> arm64_earlyprintinit </code>
+        was:
+      </p>
+      <pre><code>mov w0, 'h'
 <!------>bl arm64_lowputc
 <!------>mov w0, 'i'
 <!------>bl arm64_lowputc
 <!------>mov w0, '\n'
 <!------>bl arm64_lowputc</code></pre>
-
-        <p>
-            This did successfully print "hi" to the screen after the "Hello World" in
-            <code>arm64_earlyprintinit</code>. This means calling the C function from assembly isn't what's causing
-            problems
-            (makes sense since others have done this before me). If not that, then what? Is the <code>PRINT</code> macro
-            garbling the output?
-        </p>
-
-        <p>
-            I added a <code>PRINT</code> macro call immediately after the <code>arm64_earlyprintinit</code> call and got
-            garbled output again. This surely means that the stack does not work. From the call graph, I can see that
-            <code>arm64_boot_el1_init</code>
-            and
-            <code>arm64_boot_primary_c_routine</code> are both called before the early print. The first call should be
-            okay
-            empty (as I left it) since currently I don't have anything to initialize at EL1. The second call is more
-            complex.
-        </p>
-
-        <p>
-            On top of that, I see prior to the primary C routine call that there an instruction which loads a stack and
-            entry point:
-        </p>
-
-            <pre><code>/* load stack and entry point */
+      <p>
+        This did successfully print "hi" to the screen after the "Hello World"
+        in
+        <code> arm64_earlyprintinit </code>
+        . This means calling the C function from assembly isn't what's causing
+        problems (makes sense since others have done this before me). If not
+        that, then what? Is the
+        <code> PRINT </code>
+        macro garbling the output?
+      </p>
+      <p>
+        I added a
+        <code> PRINT </code>
+        macro call immediately after the
+        <code> arm64_earlyprintinit </code>
+        call and got garbled output again. This surely means that the stack does
+        not work. From the call graph, I can see that
+        <code> arm64_boot_el1_init </code>
+        and
+        <code> arm64_boot_primary_c_routine </code>
+        are both called before the early print. The first call should be okay
+        empty (as I left it) since currently I don't have anything to initialize
+        at EL1. The second call is more complex.
+      </p>
+      <p>
+        On top of that, I see prior to the primary C routine call that there an
+        instruction which loads a stack and entry point:
+      </p>
+      <pre><code>/* load stack and entry point */
 ldr    x24, =(g_idle_stack + CONFIG_IDLETHREAD_STACKSIZE)</code></pre>
-
-        <p>
-            The primary C routine first calls <code>arm64_chip_boot()</code>, which does various things such as board
-            and
-            serial initialization. Given the fact the first early print statement appears <i>after</i> this stage, I
-            think
-            we shouldn't be experiencing these issues with the <code>lowputc</code> garbled output.
-        </p>
-
-        <p>
-            With some more experimenting, printing a string in a for loop works as long as the string is declared as
-            <code>static</code>. Something is definitely up with uninitialized data. I will need to do some more reading
-            about the boot process to help me figure out what's going on.
-        </p>
-
-        <h2 id="day7">Day 7: 2024-07-31</h2>
-
-        <p>
-            Looking at the low-peripheral mode memory map from the BCM2711 data sheet again, I see that most of the RAM
-            starts at 0x0 (besides one SDRAM bank which is for the extra expansion for the 8GB Pi variant as far as I
-            can
-            tell). I'm modifying the MMU defines to reflect the RAM and device IO addresses. I wonder if this may
-            resolve
-            the stack issue. In any case it should help get me further along in the boot process.
-        </p>
-
-        <p>
-            I'm thinking of reaching out to the NuttX community if I can't figure out these
-            <code>PRINT</code> macro issues. It seems strange to me that the whole <code>arm64_chip_boot</code> process
-            would complete before any early printing is done. I can't see why this would be helpful.
-        </p>
-
-        <p>
-            Once I was able to experiment some more, it appears trying to print a non-static string before printing the
-            static one results in a program crash (I don't see any screen output). This means that the boot sequence is
-            likely crashing elsewhere during a normal start because of these issues (which I believe are related to the
-            stack).
-        </p>
-
-        <p>
-            There is no difference when booting <code>nuttx.img</code> or <code>nuttx.bin</code>, with or without the
-            debug
-            UART for
-            <code>start.elf</code>
-            enabled.
-        </p>
-
-        <h2 id="day8">Day 8: 2024-08-02</h2>
-
-        <p>
-            I am beginning to get frustrated by the early printing issues. I've checked the disassembly of the generated
-            binary and confirmed that the strings passed to the <code>PRINT</code> macro are kept in the
-            <code>.rodata</code> section, which is the same place as the static string from
-            <code>arm64_earlyprintinit</code> that I was using to test.
-        </p>
-
-        <p>
-            From what I can tell by reading the disassembly, the correct addresses for the string are being loaded and
-            iterated over in the <code>PRINT</code> macro. It must work too because it's the same for all the other
-            arm64
-            implementations on NuttX. This leads me to think that something is wrong with my linker script or the way
-            the
-            program is being loaded, or possibly the initial value of the stack pointer. I am not sure.
-        </p>
-
-        <h2 id="day9">Day 9: 2024-08-04</h2>
-
-        <p>
-            Finally, after much troubleshooting, I managed to boot the NuttX kernel on the Raspberry Pi 4 to the point
-            where
-            I can actually see the early print messages.
-        </p>
-
-        <p>
-            It turns out that a linker script load address of 0x80000 was not correct, and actually the load address is
-            0x480000. I don't know why all the resources I saw online say otherwise, but after seeing the debug output
-            of the Pi boot loader say "Kernel relocated to 0x480000", I decided to try that address in my linker script
-            again. I could have sworn I already tried that start address with no luck, but this is why you write down
-            your troubleshooting steps I suppose.
-        </p>
-
-        <p>Now I can see this error output during the boot process:</p>
-
-        <pre><code>----gic_validate_dist_version: No GIC version detect
+      <p>
+        The primary C routine first calls
+        <code> arm64_chip_boot() </code>
+        , which does various things such as board and serial initialization.
+        Given the fact the first early print statement appears
+        <i> after </i>
+        this stage, I think we shouldn't be experiencing these issues with the
+        <code> lowputc </code>
+        garbled output.
+      </p>
+      <p>
+        With some more experimenting, printing a string in a for loop works as
+        long as the string is declared as
+        <code> static </code>
+        . Something is definitely up with uninitialized data. I will need to do
+        some more reading about the boot process to help me figure out what's
+        going on.
+      </p>
+      <h2 id="day7">Day 7: 2024-07-31</h2>
+      <p>
+        Looking at the low-peripheral mode memory map from the BCM2711 data
+        sheet again, I see that most of the RAM starts at 0x0 (besides one SDRAM
+        bank which is for the extra expansion for the 8GB Pi variant as far as I
+        can tell). I'm modifying the MMU defines to reflect the RAM and device
+        IO addresses. I wonder if this may resolve the stack issue. In any case
+        it should help get me further along in the boot process.
+      </p>
+      <p>
+        I'm thinking of reaching out to the NuttX community if I can't figure
+        out these
+        <code> PRINT </code>
+        macro issues. It seems strange to me that the whole
+        <code> arm64_chip_boot </code>
+        process would complete before any early printing is done. I can't see
+        why this would be helpful.
+      </p>
+      <p>
+        Once I was able to experiment some more, it appears trying to print a
+        non-static string before printing the static one results in a program
+        crash (I don't see any screen output). This means that the boot sequence
+        is likely crashing elsewhere during a normal start because of these
+        issues (which I believe are related to the stack).
+      </p>
+      <p>
+        There is no difference when booting
+        <code> nuttx.img </code>
+        or
+        <code> nuttx.bin </code>
+        , with or without the debug UART for
+        <code> start.elf </code>
+        enabled.
+      </p>
+      <h2 id="day8">Day 8: 2024-08-02</h2>
+      <p>
+        I am beginning to get frustrated by the early printing issues. I've
+        checked the disassembly of the generated binary and confirmed that the
+        strings passed to the
+        <code> PRINT </code>
+        macro are kept in the
+        <code> .rodata </code>
+        section, which is the same place as the static string from
+        <code> arm64_earlyprintinit </code>
+        that I was using to test.
+      </p>
+      <p>
+        From what I can tell by reading the disassembly, the correct addresses
+        for the string are being loaded and iterated over in the
+        <code> PRINT </code>
+        macro. It must work too because it's the same for all the other arm64
+        implementations on NuttX. This leads me to think that something is wrong
+        with my linker script or the way the program is being loaded, or
+        possibly the initial value of the stack pointer. I am not sure.
+      </p>
+      <h2 id="day9">Day 9: 2024-08-04</h2>
+      <p>
+        Finally, after much troubleshooting, I managed to boot the NuttX kernel
+        on the Raspberry Pi 4 to the point where I can actually see the early
+        print messages.
+      </p>
+      <p>
+        It turns out that a linker script load address of 0x80000 was not
+        correct, and actually the load address is 0x480000. I don't know why all
+        the resources I saw online say otherwise, but after seeing the debug
+        output of the Pi boot loader say "Kernel relocated to 0x480000", I
+        decided to try that address in my linker script again. I could have
+        sworn I already tried that start address with no luck, but this is why
+        you write down your troubleshooting steps I suppose.
+      </p>
+      <p>Now I can see this error output during the boot process:</p>
+      <pre><code>----gic_validate_dist_version: No GIC version detect
 arm64_gic_initialize: no distributor detected, giving up ret=-19
 _assert: Current Version: NuttX  12.6.0-RC0 6791d4a1c4-dirty Aug  4 2024 00:38:21 arm64
 _assert: Assertion failed panic: at file: common/arm64_fatal.c:375 task: Idle_Task process: Kernel 0x481418</code></pre>
-
-        <p>
-            It looks like the way I configured the GIC-400 in my changes was not enough to allow NuttX to find the GIC.
-            By grepping for the "No GIC version detect" message, I can see it appears in the
-            <code>gic_validate_dist_version</code> function for the GICv3. The GIC400 is a GICv2. I also see in the
-            <code>.config</code> file that the GIC version is listed as 3. I need to change that.
-        </p>
-
-        <p>
-            After modifying the Kconfig files to select GICv2 with the BCM2711, I rebooted the image. The GIC error
-            messages are gone now (I take that as a success). What I see now is:
-        </p>
-
-        <pre><code>MESS:00:00:06.144520:0:----_assert: Current Version: NuttX  12.6.0-RC0 f81fb7a076-dirty Aug  4 2024 16:16:30 arm64
+      <p>
+        It looks like the way I configured the GIC-400 in my changes was not
+        enough to allow NuttX to find the GIC. By grepping for the "No GIC
+        version detect" message, I can see it appears in the
+        <code> gic_validate_dist_version </code>
+        function for the GICv3. The GIC400 is a GICv2. I also see in the
+        <code> .config </code>
+        file that the GIC version is listed as 3. I need to change that.
+      </p>
+      <p>
+        After modifying the Kconfig files to select GICv2 with the BCM2711, I
+        rebooted the image. The GIC error messages are gone now (I take that as
+        a success). What I see now is:
+      </p>
+      <pre><code>MESS:00:00:06.144520:0:----_assert: Current Version: NuttX  12.6.0-RC0 f81fb7a076-dirty Aug  4 2024 16:16:30 arm64
 _assert: Assertion failed panic: at file: common/arm64_fatal.c:375 task: Idle_Task process: Kernel 0x4811e4</code></pre>
-
-        <p>
-            I enabled further debug information in the kernel. This included all the info, error and warning options
-            that I thought would be relevant for the earlier booting stages (the MMU, GPIO, timers, interrupts, etc.). I
-            now have error output which looks like this:
-        </p>
-
-        <pre><code>arm64_oneshot_initialize: cycle_per_tick 54000
+      <p>
+        I enabled further debug information in the kernel. This included all the
+        info, error and warning options that I thought would be relevant for the
+        earlier booting stages (the MMU, GPIO, timers, interrupts, etc.). I now
+        have error output which looks like this:
+      </p>
+      <pre><code>arm64_oneshot_initialize: cycle_per_tick 54000
 arm64_fatal_error: reason = 0
 arm64_fatal_error: CurrentEL: MODE_EL1
 arm64_fatal_error: ESR_ELn: 0xbf000002
 arm64_fatal_error: FAR_ELn: 0x0
 arm64_fatal_error: ELR_ELn: 0x48a458
 print_ec_cause: SError interrupt</code></pre>
-
-        <p>
-            It seems like right after initializing a one-shot timer, a fatal error occurs. This smells like an unhandled
-            interrupt.
-        </p>
-
-        <p>
-            Looking at the <code>arm64_oneshot_initialize</code> function, right after the log of "cycle_per_tick
-            54000",
-            there is a call to <code>irq_attach</code>, followed by <code>up_enable_irq</code>, followed by
-            <code>arm64_arch_timer_enable</code>. One of these calls must be failing before we reach the next log
-            statement,
-            or an unhandled interrupt is causing a problem.
-        </p>
-
-        <p>
-            I added another log statement right after <code>irq_attach</code>, booted again and observed that the new
-            log
-            statement was not executed. This narrows down the search space. The debug output says the reason is
-            <code>0</code>, which is the value given to <code>K_ERR_CPU_EXCEPTION</code>. The function
-            <code>arm64_fatal_error</code> is only called in <code>arm64_vector.S</code>, and it is only called twice
-            with
-            that <code>reason</code> argument. Between the two times it's called with that <code>reason</code>, one of
-            them
-            is the <code>arm64_serror_handler</code> function, and the <code>print_ec_cause</code>
-            information output says the cause was an "SError interrupt".
-        </p>
-
-        <p>
-            The <code>arm64_serror_handler</code> function is used as the default handler for 3 vector table entries. I
-            now
-            need to figure out what triggered the SError interrupt.
-        </p>
-
-        <p>
-            Adding logging information inside of the <code>irq_attach</code> function, I can see that the failure is
-            probably occurring inside <code>spin_lock_irqsave</code>:
-        </p>
-
-        <pre><code>mm_malloc: Allocated 0x4c13b0, size 48
+      <p>
+        It seems like right after initializing a one-shot timer, a fatal error
+        occurs. This smells like an unhandled interrupt.
+      </p>
+      <p>
+        Looking at the
+        <code> arm64_oneshot_initialize </code>
+        function, right after the log of "cycle_per_tick 54000", there is a call
+        to
+        <code> irq_attach </code>
+        , followed by
+        <code> up_enable_irq </code>
+        , followed by
+        <code> arm64_arch_timer_enable </code>
+        . One of these calls must be failing before we reach the next log
+        statement, or an unhandled interrupt is causing a problem.
+      </p>
+      <p>
+        I added another log statement right after
+        <code> irq_attach </code>
+        , booted again and observed that the new log statement was not executed.
+        This narrows down the search space. The debug output says the reason is
+        <code> 0 </code>
+        , which is the value given to
+        <code> K_ERR_CPU_EXCEPTION </code>
+        . The function
+        <code> arm64_fatal_error </code>
+        is only called in
+        <code> arm64_vector.S </code>
+        , and it is only called twice with that
+        <code> reason </code>
+        argument. Between the two times it's called with that
+        <code> reason </code>
+        , one of them is the
+        <code> arm64_serror_handler </code>
+        function, and the
+        <code> print_ec_cause </code>
+        information output says the cause was an "SError interrupt".
+      </p>
+      <p>
+        The
+        <code> arm64_serror_handler </code>
+        function is used as the default handler for 3 vector table entries. I
+        now need to figure out what triggered the SError interrupt.
+      </p>
+      <p>
+        Adding logging information inside of the
+        <code> irq_attach </code>
+        function, I can see that the failure is probably occurring inside
+        <code> spin_lock_irqsave </code>
+        :
+      </p>
+      <pre><code>mm_malloc: Allocated 0x4c13b0, size 48
 arm64_oneshot_initialize: cycle_per_tick 54000
 irq_attach: In irq_attach
 irq_attach: before spin_lock_irqsave
 arm64_fatal_error: reason = 0</code></pre>
-
-        <p>
-            Repeating this process of adding logging statements, the failure is now narrowed down to within
-            <code>spin_lock</code>, in <code>up_testset</code>.
-        </p>
-
-        <p>
-            I found a
-            <a
-                href="https://stackoverflow.com/questions/78295719/steps-to-resolve-serror-panic-on-armv8-a-or-how-to-identify-the-faulty-instructi">StackOverflow
-                article about SErrors</a>.
-        </p>
-
-        <h2 id="day10">Day 10: 2024-08-05</h2>
-
-        <p>
-            It seems the SError is a tricky one to reason about. It occurs when the system detects an unrecoverable
-            fault,
-            and it is asynchronous.
-        </p>
-
-        <p>
-            I have found <a href="https://boreas618.github.io/posts/exception.html">this blog post</a> which had some
-            information
-            regarding SErrors. It has a handy excerpt from the ARM documentation breaking down the information encoded
-            in the <code>ESR_ELn</code> register.
-        </p>
-
-        <p>
-            In my case, the first 6 bits (<code>0b101111</code>) indicate an SError (as is picked up and printed by
-            <code>print_ec_cause</code>). The following bit <code>0b1</code>, indicates that the trapped instruction was
-            32
-            bits. The remaining bits <code>0b1000000000000000000000010</code> are the <code>ISS</code>, or "Instruction
-            Specific Syndrome" field. This should tell me more information about the exception.
-        </p>
-
-        <p>
-            Unfortunately, if <a
-                href="https://stackoverflow.com/questions/53485535/can-i-detect-from-which-mode-el1-el0-serror-interrupt-was-caused">this
-                StackOverflow article</a>
-            is to be believed, then the ISS field is implementation defined. This means that unless Broadcom documents what this
-            ISS means, I will have a lot of trouble decoding it myself. And Broadcom does not like to share information
-            about their processor.
-        </p>
-
-        <p>
-            I found this <a
-                href="https://developer.arm.com/documentation/ddi0601/2024-03/AArch64-Registers/ESR-EL3--Exception-Syndrome-Register--EL3-?lang=en#fieldset_0-24_0_23">ARM
-                documentation page for SError <code>ISS</code>
-                encoding</a>.
-        </p>
-
-        <p>
-            In my case, <code>IDS</code> (bit 24) is set to 1, which means bits 23 to 0 contain implementation defined
-            syndrome information. This means I have to figure out if anyone has reverse-engineered the Broadcom
-            encoding.
-        </p>
-
-        <p>
-            Continuing to read through the first blog post about ARM exceptions, I see that the
-            <code>ESR_ELn</code> register is supposed to contain the address to return to at the end of the exception.
-            It is
-            set to <code>0x48a4ac</code>, pointing to the following instruction of <code>up_testset</code> (where I
-            traced
-            the error):
-        </p>
-
-        <pre><code>ldaxr x2, [x0] /* Test if spinlock is locked or not */</code></pre>
-
-        <p>
-            This address seems to consistently be the address in <code>ESR_ELn</code> after running the boot a few
-            times. I
-            was worried that because SError is an asynchronous exception, the address may change.
-        </p>
-
-        <p>
-            I did some searching online for <code>ldaxr</code> causing an exception, and found <a
-                href="https://community.arm.com/support-forums/f/architectures-and-processors-forum/44293/atomic-write-ldaxr-stlxr-causes-infinite-loop-on-cortex-a72">this
-                interesting post on the ARM support forums for the Cortex A72</a>.
-        </p>
-
-        <p>
-            It seems like the MMU may need to be enabled in order to use these instructions. I am going to search to
-            confirm
-            this, but in my case the MMU was not enabled. Looking at the other <code>arm64</code> implementations, most
-            of
-            them do enable the MMU unconditionally.
-        </p>
-
-        <p>
-            I enabled the MMU initialization, re-compiled and rebooted. Here is the new output with
-            <code>CONFIG_MMU_DEBUG</code> enabled:
-        </p>
-
-        <pre><code>MESS:00:00:06.174977:0:----arm64_mmu_init: xlat tables:
+      <p>
+        Repeating this process of adding logging statements, the failure is now
+        narrowed down to within
+        <code> spin_lock </code>
+        , in
+        <code> up_testset </code>
+        .
+      </p>
+      <p>
+        I found a
+        <a
+          href="https://stackoverflow.com/questions/78295719/steps-to-resolve-serror-panic-on-armv8-a-or-how-to-identify-the-faulty-instructi"
+        >
+          StackOverflow article about SErrors
+        </a>
+        .
+      </p>
+      <h2 id="day10">Day 10: 2024-08-05</h2>
+      <p>
+        It seems the SError is a tricky one to reason about. It occurs when the
+        system detects an unrecoverable fault, and it is asynchronous.
+      </p>
+      <p>
+        I have found
+        <a href="https://boreas618.github.io/posts/exception.html">
+          this blog post
+        </a>
+        which had some information regarding SErrors. It has a handy excerpt
+        from the ARM documentation breaking down the information encoded in the
+        <code> ESR_ELn </code>
+        register.
+      </p>
+      <p>
+        In my case, the first 6 bits (
+        <code> 0b101111 </code>
+        ) indicate an SError (as is picked up and printed by
+        <code> print_ec_cause </code>
+        ). The following bit
+        <code> 0b1 </code>
+        , indicates that the trapped instruction was 32 bits. The remaining bits
+        <code> 0b1000000000000000000000010 </code>
+        are the
+        <code> ISS </code>
+        , or "Instruction Specific Syndrome" field. This should tell me more
+        information about the exception.
+      </p>
+      <p>
+        Unfortunately, if
+        <a
+          href="https://stackoverflow.com/questions/53485535/can-i-detect-from-which-mode-el1-el0-serror-interrupt-was-caused"
+        >
+          this StackOverflow article
+        </a>
+        is to be believed, then the ISS field is implementation defined. This
+        means that unless Broadcom documents what this ISS means, I will have a
+        lot of trouble decoding it myself. And Broadcom does not like to share
+        information about their processor.
+      </p>
+      <p>
+        I found this
+        <a
+          href="https://developer.arm.com/documentation/ddi0601/2024-03/AArch64-Registers/ESR-EL3--Exception-Syndrome-Register--EL3-?lang=en#fieldset_0-24_0_23"
+        >
+          ARM documentation page for SError
+          <code> ISS </code>
+          encoding
+        </a>
+        .
+      </p>
+      <p>
+        In my case,
+        <code> IDS </code>
+        (bit 24) is set to 1, which means bits 23 to 0 contain implementation
+        defined syndrome information. This means I have to figure out if anyone
+        has reverse-engineered the Broadcom encoding.
+      </p>
+      <p>
+        Continuing to read through the first blog post about ARM exceptions, I
+        see that the
+        <code> ESR_ELn </code>
+        register is supposed to contain the address to return to at the end of
+        the exception. It is set to
+        <code> 0x48a4ac </code>
+        , pointing to the following instruction of
+        <code> up_testset </code>
+        (where I traced the error):
+      </p>
+      <pre><code>ldaxr x2, [x0] /* Test if spinlock is locked or not */</code></pre>
+      <p>
+        This address seems to consistently be the address in
+        <code> ESR_ELn </code>
+        after running the boot a few times. I was worried that because SError is
+        an asynchronous exception, the address may change.
+      </p>
+      <p>
+        I did some searching online for
+        <code> ldaxr </code>
+        causing an exception, and found
+        <a
+          href="https://community.arm.com/support-forums/f/architectures-and-processors-forum/44293/atomic-write-ldaxr-stlxr-causes-infinite-loop-on-cortex-a72"
+        >
+          this interesting post on the ARM support forums for the Cortex A72
+        </a>
+        .
+      </p>
+      <p>
+        It seems like the MMU may need to be enabled in order to use these
+        instructions. I am going to search to confirm this, but in my case the
+        MMU was not enabled. Looking at the other
+        <code> arm64 </code>
+        implementations, most of them do enable the MMU unconditionally.
+      </p>
+      <p>
+        I enabled the MMU initialization, re-compiled and rebooted. Here is the
+        new output with
+        <code> CONFIG_MMU_DEBUG </code>
+        enabled:
+      </p>
+      <pre><code>MESS:00:00:06.174977:0:----arm64_mmu_init: xlat tables:
 arm64_mmu_init: base table(L1): 0x4cb000, 64 entries
 arm64_mmu_init: 0: 0x4c4000
 arm64_mmu_init: 1: 0x4c5000
@@ -956,29 +1171,35 @@ up_dump_register: SP_ELX:    0x4d2f40
 up_dump_register: TPIDR_EL0: 0x0               
 up_dump_register: TPIDR_EL1: 0x0               
 up_dump_register: EXE_DEPTH: 0x1</code></pre>
-
-        <p>Seems like we have a new exception happening to figure out.</p>
-
-        <p>
-            Looking at the ARM documentation for exceptions again, the <code>ESR_ELn</code> tells us that this is a Data
-            Abort exception taken without a change in the exception level. It is used for MMU faults generated by data
-            accesses (and some other things, but this is the most likely cause).
-        </p>
-
-        <p>
-            Looking at the register <code>x2</code> and <code>x3</code>, those are the address of the
-            <code>AUX_MU_IO_REG</code>. It seems we might be getting in trouble for trying to access peripheral IO
-            addresses? The exception happens in the <code>mm_addregion</code>
-            function.
-        </p>
-
-        <p>
-            While searching for clues online, I came across this handy utility for decoding the ESR register called
-            <a href="https://github.com/google/aarch64-esr-decoder"><code>aarch64-esr-decoder</code></a>. Here is the output for
-            the error I've encountered:
-        </p>
-
-        <pre><code>ESR 0x00000000000000000000000096000045:
+      <p>Seems like we have a new exception happening to figure out.</p>
+      <p>
+        Looking at the ARM documentation for exceptions again, the
+        <code> ESR_ELn </code>
+        tells us that this is a Data Abort exception taken without a change in
+        the exception level. It is used for MMU faults generated by data
+        accesses (and some other things, but this is the most likely cause).
+      </p>
+      <p>
+        Looking at the register
+        <code> x2 </code>
+        and
+        <code> x3 </code>
+        , those are the address of the
+        <code> AUX_MU_IO_REG </code>
+        . It seems we might be getting in trouble for trying to access
+        peripheral IO addresses? The exception happens in the
+        <code> mm_addregion </code>
+        function.
+      </p>
+      <p>
+        While searching for clues online, I came across this handy utility for
+        decoding the ESR register called
+        <a href="https://github.com/google/aarch64-esr-decoder">
+          <code> aarch64-esr-decoder </code>
+        </a>
+        . Here is the output for the error I've encountered:
+      </p>
+      <pre><code>ESR 0x00000000000000000000000096000045:
 37..63 RES0: 0x0000000 0b000000000000000000000000000
 32..36 ISS2: 0x00 0b00000
 26..31 EC: 0x25 0b100101
@@ -1000,18 +1221,20 @@ up_dump_register: EXE_DEPTH: 0x1</code></pre>
 # Abort caused by writing to memory
 00..05 DFSC: 0x05 0b000101
 # Translation fault, level 1.</code></pre>
-
-        <p>
-            After poking around in the MMU initialization code, I noticed that the pre-processor definitions
-            <code>CONFIG_RAM_START</code>
-            and <code>CONFIG_RAM_SIZE</code> were being used to start up the MMU and allocate the heap. These were set
-            to
-            the wrong value in my <code>nsh defconfig</code> preset from before. I changed these to match the correct
-            values
-            (start at 0 and have 4GB - 64MB of size), and now I get much further in the boot process:
-        </p>
-
-        <pre><code>MESS:00:00:06.211786:0:----irq_attach: In irq_attach
+      <p>
+        After poking around in the MMU initialization code, I noticed that the
+        pre-processor definitions
+        <code> CONFIG_RAM_START </code>
+        and
+        <code> CONFIG_RAM_SIZE </code>
+        were being used to start up the MMU and allocate the heap. These were
+        set to the wrong value in my
+        <code> nsh defconfig </code>
+        preset from before. I changed these to match the correct values (start
+        at 0 and have 4GB - 64MB of size), and now I get much further in the
+        boot process:
+      </p>
+      <pre><code>MESS:00:00:06.211786:0:----irq_attach: In irq_attach
 irq_attach: before spin_lock_irqsave
 spin_lock_irqsave: me: 0
 spin_lock_irqsave: before spin_lock
@@ -1056,23 +1279,29 @@ dump_tasks:   ----   --- --- -------- ------- --- ------- ---------- -----------
 dump_task:       0     0   0 FIFO     Kthread - Running            0000000000000000 0x4c5010      8176      1200    14.6%    Idle_Task
 
 CTRL-A Z for help | 115200 8N1 | NOR | Minicom 2.9 | VT102 | Offline | ttyUSB0</code></pre>
-
-        <p>
-            My logging messages from before with the <code>irq_attach</code> function are now being executed! It seems
-            we get up to the serial driver initialization, which means I'm now past the nitty gritty boot stage (I think &
-            hope) and into writing the serial driver all the way. I think failing to open <code>stdin</code> is a result
-            of the unimplemented serial driver initialization. The error code is -38, which is the <code>ENOSYS</code>
-            error being returned from the <code>bcm2711_miniuart_attach</code> and <code>bcm2711_miniuart_ioctl</code>
-            functions.
-        </p>
-
-        <p>
-            I changed the return error value of the attach function to 0 for success just to see what would happen. It
-            looks
-            like we actual get to NSH before crashing:
-        </p>
-
-        <pre><code>mm_initialize: Heap: name=Umem, start=0x4cc000 size=4222828544
+      <p>
+        My logging messages from before with the
+        <code> irq_attach </code>
+        function are now being executed! It seems we get up to the serial driver
+        initialization, which means I'm now past the nitty gritty boot stage (I
+        think &amp; hope) and into writing the serial driver all the way. I
+        think failing to open
+        <code> stdin </code>
+        is a result of the unimplemented serial driver initialization. The error
+        code is -38, which is the
+        <code> ENOSYS </code>
+        error being returned from the
+        <code> bcm2711_miniuart_attach </code>
+        and
+        <code> bcm2711_miniuart_ioctl </code>
+        functions.
+      </p>
+      <p>
+        I changed the return error value of the attach function to 0 for success
+        just to see what would happen. It looks like we actual get to NSH before
+        crashing:
+      </p>
+      <pre><code>mm_initialize: Heap: name=Umem, start=0x4cc000 size=4222828544
 mm_addregion: [Umem] Region 1: base=0x4cc2a8 size=4222827856
 mm_malloc: Allocated 0x4cc2d0, size 144
 mm_malloc: Allocated 0x4cc360, size 80
@@ -1110,18 +1339,15 @@ nxtask_exit: nsh_main pid=2,TCB=0x4ce730
 mm_free: Freeing 0x4ced90
 mm_free: Freeing 0x4ce730
 nx_start: CPU0: Beginning Idle Loop</code></pre>
-
-        <p>
-            The idle loop might be because we're waiting for interrupts that never arrive, or because there's just no
-            interrupt handler yet.
-        </p>
-
-        <p>
-            After writing the interrupt handling logic, I'm encountering a strange issue where there is a constant TX
-            interrupt despite it being disabled.
-        </p>
-
-        <pre><code>mm_malloc: Allocated 0x4d1da0, size 848
+      <p>
+        The idle loop might be because we're waiting for interrupts that never
+        arrive, or because there's just no interrupt handler yet.
+      </p>
+      <p>
+        After writing the interrupt handling logic, I'm encountering a strange
+        issue where there is a constant TX interrupt despite it being disabled.
+      </p>
+      <pre><code>mm_malloc: Allocated 0x4d1da0, size 848
 bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT enabled, 00000003
 bcm2711_miniuart_txint: TXINT disabled, 00000002
@@ -1133,260 +1359,297 @@ bcm2711_miniuart_rxint: RXINT enabled, 00000003
 nx_start: CPU0: Beginning Idle Loop
 
 NuttShell (NSH) NuttX-12.6.0-RC0
-nsh> bcm2711_miniuart_txint: TXINT disabled, 00000002
+nsh&gt; bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT disabled, 00000002
 bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
-
-        <p>
-            The transmit interrupt is being disabled properly, but the interrupt handler is still constantly being
-            called
-            and the interrupt ID has a value indicating that the transmit FIFO is empty (which technically is true, but
-            the
-            interrupt shouldn't be triggered with nothing happening). I'm not really sure how to clear the interrupt
-            pending
-            bit for the Mini UART since it's not mentioned in the manual and the bit is marked as read-only.
-        </p>
-
-        <p>
-            I tried holding down a key during the boot process and the key is successfully read and re-displayed. This
-            means
-            the receive logic does work. There is just something broken that is causing the interrupts to constantly be
-            triggered.
-        </p>
-
-        <p>
-            Interestingly, putting a logging statement in the receive part of the interrupt handler allows me to
-            actually
-            interact with the NuttX shell. Without the statement my keyboard inputs appear to do nothing.
-        </p>
-
-        <p>
-            If I then run <code>ostest</code>, the input doesn't appear until I generate some kind of input (like
-            holding
-            'enter').
-        </p>
-
-        <h2 id="day11">Day 11: 2024-08-06</h2>
-
-        <p>
-            After much annoyance, I had discovered some online forum posts about the BCM2835 having its TX and RX
-            interrupts swapped in the data sheet. I dismissed this as not being applicable to the BCM2711 processor
-            because <i>surely</i> they would have fixed that error by now. I eventually got desperate and decided to
-            give swapping the interrupts a shot. As it turns out, that worked and now I can interact with NSH properly.
-        </p>
-
-        <p>
-            And with that, I finally have NuttX booted with a proper shell on the Pi 4B! It's time to run the
-            <code>ostest</code>
-            and see how it fares.
-        </p>
-
-        <p>
-            It seems that the <code>ostest</code> passed which is great. Now that I have a working shell to experiment
-            with, it's time to implement some more drivers. The first thing I noticed was the <code>/proc</code> file
-            system was missing even though the configuration says to enable it. I think that will be useful for
-            debugging, so I might want to implement that next. It's tempting to implement SMP, but I think I'll let that
-            wait until I have the system a little more fleshed out.
-        </p>
-
-        <p>
-            Turns out that adding <code>procfs</code> was easier than I thought; I just needed to conditionally mount it
-            in the
-            <code>board_app_initialize</code> function for the Raspberry Pi 4B.
-        </p>
-
-        <p>
-            In my opinion, the next two obvious choices for drivers to implement would be the PL011 UARTs or the I2C
-            functionality. This is because I have all the equipment necessary to test those features, and I know a fair
-            bit about those two protocols. Both of these require GPIO control, and I don't want to have to continue
-            hacking out <code>putreg</code> and <code>modreg</code> calls to change the GPIO settings. If I implement
-            the GPIO framework first, I can write the remaining drivers more easily with some helper functions for
-            switching pin function, configuring pull-ups/pull-downs, etc. So logically, I think the next thing to
-            implement would be GPIO.
-        </p>
-
-        <h2 id="day12">Day 12: 2024-08-11</h2>
-
-        <p>
-            I have implemented the basic functionality for controlling GPIO pins. This includes a bunch of utilities in
-            <code>arch/arm64/src/bcm2711/bcm2711_gpio.c</code> and the high level GPIO driver in
-            <code>boards/arm64/bcm2711/raspberrypi-4b/src/rpi4b_gpio.c</code>. Right now the interrupt handling for the
-            pins is
-            entirely untested.
-        </p>
-
-        <p>
-            While implementing the high level GPIO driver (using the RP2040's as a guideline), I noticed some
-            shortcomings.
-        </p>
-
-        <p>
-            First, you must specify single pins as being an input, output or interrupt pin. You cannot have one pin
-            which can be configured to do all three depending on what the user wants. So I have to pick a reasonable set
-            of GPIO pins with some as inputs, some as outputs, etc.
-        </p>
-
-        <p>
-            Second, input GPIOs can typically have pull-up, pull-down or no resistors. The GPIO device interface does
-            not allow this to be configured, so I had to pick a default of pull-up resistors enabled.
-        </p>
-
-        <p>
-            Finally, the interrupt pins do not allow you to select what kind of interrupt trigger each one has. The
-            Raspberry Pi 4B has 6 different interrupt event triggers (rising edge, falling edge, high level, low level,
-            async rising/falling edge). It is only possible to choose one type of event as a default when devices are
-            registered, or a combination of these events, but all pins will have a pre-configured event which cannot be
-            changed.
-        </p>
-
-        <p>
-            As far as the implementation goes, the GPIO utilities for configuring resistors and input/output seem to
-            work just fine, and same with the high level driver. I'm able to turn off and on outputs and read the
-            correct values on inputs. I will tackle interrupts later because I may discover something that allows more
-            customization for the user.
-        </p>
-
-        <p>
-            As of right now, even the low-level GPIO utilities for interrupts could be optimized. The Raspberry Pi 4B
-            has four GPIO IRQs (GPIO 0-4, or IRQs 49-53). I would imagine that some subset of GPIO pins trigger the GPIO
-            0 IRQ, another subset GPIO 1, etc. Unfortunately I can't confirm this because there is no indication in the
-            BCM2711 data sheet. For now I've attached the same interrupt handler to all four IRQs, and it will perform a
-            search of all 57 pins to see which have an event detected and then call their respective handlers.
-        </p>
-
-        <p>
-            At this point I think I want to move on to I2C drivers so that I can get more of this board's functionality
-            working.
-        </p>
-
-        <p>
-            I've added most of the implementation for the I2C driver at this point, using the RP2040 implementation as a
-            reference. I cannot figure out how to properly read/send using the hardware interface though, as I am
-            continually getting ACK errors when scanning the I2C bus.
-        </p>
-
-        <p>
-            Right now, I am able to successfully attach the I2C IRQ handler, initialize one I2C device (I2C1 for now)
-            and register the I2C character driver for any configured interface. This is a pretty good start, although
-            I'm still missing the core functionality of sending and receiving data. I'm unsure how to implement the
-            <code>NOSTART</code> option (I saw the RP2040 implementation did not have that feature either) and how to
-            best implement <code>NOSTOP</code>.
-        </p>
-
-        <h2 id="day12">Day 12: 2024-08-13</h2>
-
-        <p>
-            Since I haven't made much headway debugging the I2C driver I was working on, I decided to take a break by
-            implementing something easier: the other UART interfaces on the Raspberry Pi 4B.
-        </p>
-
-        <p>
-            The Pi has 6 UART interfaces in total: 1 Mini UART (which I wrote the driver for to get console output) and
-            5 PL011 UART interfaces. I know from looking around the NuttX source tree that there is already a PL011 UART
-            driver implementation because it's a pretty standard UART interface for ARM chips. After looking at the
-            source, however, I noticed that the driver is meant as a standalone driver with its own config file; it's
-            not a library to be used to create PL011 drivers like the NuttX UART device driver code is (the code I used
-            to implement and register the Mini
-            UART driver).
-        </p>
-
-        <p>
-            I grepped through the kernel source code and noticed that there are only a couple of implementations that
-            actually use the PL011 functions. QEMU and Goldfish used it for both arm and arm64. This makes sense since
-            they are ARM virtualizations, so they would simulate standard ARM UART interfaces.
-        </p>
-
-        <p>
-            The current PL011 implementation does not work for the Raspberry Pi implementation. It has too few
-            configurable PL011 interfaces in its code and Kconfig file, and it numbers them 0 through 3. The Pi UARTs are
-            numbered 0 through 5, and UART 1 is not a PL011 UART (so this messes with the existing numbering scheme).
-            Finally, each UART base address must be configured through the Kconfig options. I already have the Raspberry
-            Pi UART base addresses get configured based on the Pi's memory setup configuration (low peripheral, legacy
-            mode, etc.). I don't want to code this logic again in Kconfig when it's already implemented in pre-processor
-            logic.
-        </p>
-
-        <p>
-            My idea was to turn the PL011 code into a library that could be included by board-specific PL011 driver
-            implementations. This would allow a board-specific driver implementation to define as many or as few PL011
-            UART devices as the board supports, and number them however they want. The driver code would have full
-            control over setting the device fields like baud rate, base address, etc, using custom logic. Once all the
-            devices are statically initialized, they could be registered using <code>pl011_uart_register()</code> which
-            is a wrapper around the standard <code>uart_register()</code> and which initializes the device's
-            <code>ops</code> member with the PL011 driver ops which are static and contained within the
-            <code>uart_pl011.c</code> file. This way developers don't need to duplicate that code but can still get
-            more control over their PL011 driver implementation.
-        </p>
-
-        <p>
-            This change would be good to make now before too many boards rely on the PL011 driver that's already
-            implemented. Since PL011 is pretty standard, it would be useful for future boards/chip implementations. I
-            raised this issue on the NuttX GitHub repository to get some initial feedback
-            <a href="https://github.com/apache/nuttx/issues/12901">here</a>. It seemed positively received, so I will now be
-            spending some time changing the logic over to a library and modifying the QEMU/Goldfish code to construct
-            their own drivers using the new library. Those changes should be relatively small since the driver isn't
-            very involved for those boards. Most of the work will be changing the Kconfig/defconfig files.
-        </p>
-
-        <p>
-            I changed the implementation and re-wrote the arm64 serial driver for QEMU, everything booted just fine. I
-            repeated the same process for the ARMv7 QEMU serial driver and it doesn't work correctly. I am trying to
-            debug why.
-        </p>
-
-        <h2 id="day13">Day 13: 2024-08-21</h2>
-
-        <p> While I wait for my changes to make the PL011 driver more extensible, I went back to developing an I2C
-            driver. I am successfully able to detect the sensors on the I2C bus using the <code>i2c</code> tool provided
-            by the NuttX apps. This is a great first step.
-        </p>
-
-        <p>
-            However, if I then try to use <code>i2c dump</code> to read the contents of an EEPROM (which was detected)
-            on the I2C bus, I get a failure and then the devices are no longer visible after executing the <code>i2c
-                dev</code> command until after reboot. This indicates to me that there's probably something wrong with
-            my write operations.
-        </p>
-
-        <h2 id="day14">Day 14: 2024-08-23</h2>
-
-        <p>
-            After playing around some more, I've actually been able to dump the EEPROM contents over I2C using the
-            driver I implemented. I'm not really sure why, but when I provide the <code>-r</code> register option, the
-            transfer fails and then I'm no longer able to dump anything. This means my I2C driver works, but there must
-            be some kind of internal state problem that isn't being reset enough to continue writing/reading.
-        </p>
-
-        <p>
-            I noticed that the send operations are finishing prematurely because the <code>TXW</code> (TX FIFO needs writing)
-            interrupts were prematurely posting the <code>wait</code> for interrupt semaphore, when instead I needed to
-            wait for the <code>DONE</code> interrupt. After fixing this issue, I still encounter the problem were all of the
-            receive operations after a send operation do nothing but return an error. I'll have to debug further with more
-            logging.
-        </p>
-
-        <h2 id="conclusion">Conclusion</h2>
-        
-        <p>
-            The implementation for the Raspberry Pi 4B does not end here; there are significantly more peripherals
-            that need code written. However, getting NSH to show up on boot and the system passing OSTest was enough
-            to successfully merge my implementation into the NuttX kernel. You can see the <a
-                href="https://github.com/apache/nuttx/pull/15188">pull request here</a>.
-        </p>
-
-        <p>
-            I may continue to make blog posts as I implement some of the remaining features. Hopefully now that the
-            implementation is in the kernel, other people with Raspberry Pis available to them may start working on adding more
-            support for the Pi 4B. I know this blog post was a little chaotic with me hopping between tasks any time I
-            hit a roadblock, but hopefully it's still of some use and gave you an indication of how to troubleshoot the
-            porting process. I anticipate future posts will be a little less chaotic since I can now pick a single
-            peripheral to work on and hack away at it.
-        </p>
-
+      <p>
+        The transmit interrupt is being disabled properly, but the interrupt
+        handler is still constantly being called and the interrupt ID has a
+        value indicating that the transmit FIFO is empty (which technically is
+        true, but the interrupt shouldn't be triggered with nothing happening).
+        I'm not really sure how to clear the interrupt pending bit for the Mini
+        UART since it's not mentioned in the manual and the bit is marked as
+        read-only.
+      </p>
+      <p>
+        I tried holding down a key during the boot process and the key is
+        successfully read and re-displayed. This means the receive logic does
+        work. There is just something broken that is causing the interrupts to
+        constantly be triggered.
+      </p>
+      <p>
+        Interestingly, putting a logging statement in the receive part of the
+        interrupt handler allows me to actually interact with the NuttX shell.
+        Without the statement my keyboard inputs appear to do nothing.
+      </p>
+      <p>
+        If I then run
+        <code> ostest </code>
+        , the input doesn't appear until I generate some kind of input (like
+        holding 'enter').
+      </p>
+      <h2 id="day11">Day 11: 2024-08-06</h2>
+      <p>
+        After much annoyance, I had discovered some online forum posts about the
+        BCM2835 having its TX and RX interrupts swapped in the data sheet. I
+        dismissed this as not being applicable to the BCM2711 processor because
+        <i> surely </i>
+        they would have fixed that error by now. I eventually got desperate and
+        decided to give swapping the interrupts a shot. As it turns out, that
+        worked and now I can interact with NSH properly.
+      </p>
+      <p>
+        And with that, I finally have NuttX booted with a proper shell on the Pi
+        4B! It's time to run the
+        <code> ostest </code>
+        and see how it fares.
+      </p>
+      <p>
+        It seems that the
+        <code> ostest </code>
+        passed which is great. Now that I have a working shell to experiment
+        with, it's time to implement some more drivers. The first thing I
+        noticed was the
+        <code> /proc </code>
+        file system was missing even though the configuration says to enable it.
+        I think that will be useful for debugging, so I might want to implement
+        that next. It's tempting to implement SMP, but I think I'll let that
+        wait until I have the system a little more fleshed out.
+      </p>
+      <p>
+        Turns out that adding
+        <code> procfs </code>
+        was easier than I thought; I just needed to conditionally mount it in
+        the
+        <code> board_app_initialize </code>
+        function for the Raspberry Pi 4B.
+      </p>
+      <p>
+        In my opinion, the next two obvious choices for drivers to implement
+        would be the PL011 UARTs or the I2C functionality. This is because I
+        have all the equipment necessary to test those features, and I know a
+        fair bit about those two protocols. Both of these require GPIO control,
+        and I don't want to have to continue hacking out
+        <code> putreg </code>
+        and
+        <code> modreg </code>
+        calls to change the GPIO settings. If I implement the GPIO framework
+        first, I can write the remaining drivers more easily with some helper
+        functions for switching pin function, configuring pull-ups/pull-downs,
+        etc. So logically, I think the next thing to implement would be GPIO.
+      </p>
+      <h2 id="day12">Day 12: 2024-08-11</h2>
+      <p>
+        I have implemented the basic functionality for controlling GPIO pins.
+        This includes a bunch of utilities in
+        <code> arch/arm64/src/bcm2711/bcm2711_gpio.c </code>
+        and the high level GPIO driver in
+        <code> boards/arm64/bcm2711/raspberrypi-4b/src/rpi4b_gpio.c </code>
+        . Right now the interrupt handling for the pins is entirely untested.
+      </p>
+      <p>
+        While implementing the high level GPIO driver (using the RP2040's as a
+        guideline), I noticed some shortcomings.
+      </p>
+      <p>
+        First, you must specify single pins as being an input, output or
+        interrupt pin. You cannot have one pin which can be configured to do all
+        three depending on what the user wants. So I have to pick a reasonable
+        set of GPIO pins with some as inputs, some as outputs, etc.
+      </p>
+      <p>
+        Second, input GPIOs can typically have pull-up, pull-down or no
+        resistors. The GPIO device interface does not allow this to be
+        configured, so I had to pick a default of pull-up resistors enabled.
+      </p>
+      <p>
+        Finally, the interrupt pins do not allow you to select what kind of
+        interrupt trigger each one has. The Raspberry Pi 4B has 6 different
+        interrupt event triggers (rising edge, falling edge, high level, low
+        level, async rising/falling edge). It is only possible to choose one
+        type of event as a default when devices are registered, or a combination
+        of these events, but all pins will have a pre-configured event which
+        cannot be changed.
+      </p>
+      <p>
+        As far as the implementation goes, the GPIO utilities for configuring
+        resistors and input/output seem to work just fine, and same with the
+        high level driver. I'm able to turn off and on outputs and read the
+        correct values on inputs. I will tackle interrupts later because I may
+        discover something that allows more customization for the user.
+      </p>
+      <p>
+        As of right now, even the low-level GPIO utilities for interrupts could
+        be optimized. The Raspberry Pi 4B has four GPIO IRQs (GPIO 0-4, or IRQs
+        49-53). I would imagine that some subset of GPIO pins trigger the GPIO 0
+        IRQ, another subset GPIO 1, etc. Unfortunately I can't confirm this
+        because there is no indication in the BCM2711 data sheet. For now I've
+        attached the same interrupt handler to all four IRQs, and it will
+        perform a search of all 57 pins to see which have an event detected and
+        then call their respective handlers.
+      </p>
+      <p>
+        At this point I think I want to move on to I2C drivers so that I can get
+        more of this board's functionality working.
+      </p>
+      <p>
+        I've added most of the implementation for the I2C driver at this point,
+        using the RP2040 implementation as a reference. I cannot figure out how
+        to properly read/send using the hardware interface though, as I am
+        continually getting ACK errors when scanning the I2C bus.
+      </p>
+      <p>
+        Right now, I am able to successfully attach the I2C IRQ handler,
+        initialize one I2C device (I2C1 for now) and register the I2C character
+        driver for any configured interface. This is a pretty good start,
+        although I'm still missing the core functionality of sending and
+        receiving data. I'm unsure how to implement the
+        <code> NOSTART </code>
+        option (I saw the RP2040 implementation did not have that feature
+        either) and how to best implement
+        <code> NOSTOP </code>
+        .
+      </p>
+      <h2 id="day12">Day 12: 2024-08-13</h2>
+      <p>
+        Since I haven't made much headway debugging the I2C driver I was working
+        on, I decided to take a break by implementing something easier: the
+        other UART interfaces on the Raspberry Pi 4B.
+      </p>
+      <p>
+        The Pi has 6 UART interfaces in total: 1 Mini UART (which I wrote the
+        driver for to get console output) and 5 PL011 UART interfaces. I know
+        from looking around the NuttX source tree that there is already a PL011
+        UART driver implementation because it's a pretty standard UART interface
+        for ARM chips. After looking at the source, however, I noticed that the
+        driver is meant as a standalone driver with its own config file; it's
+        not a library to be used to create PL011 drivers like the NuttX UART
+        device driver code is (the code I used to implement and register the
+        Mini UART driver).
+      </p>
+      <p>
+        I grepped through the kernel source code and noticed that there are only
+        a couple of implementations that actually use the PL011 functions. QEMU
+        and Goldfish used it for both arm and arm64. This makes sense since they
+        are ARM virtualizations, so they would simulate standard ARM UART
+        interfaces.
+      </p>
+      <p>
+        The current PL011 implementation does not work for the Raspberry Pi
+        implementation. It has too few configurable PL011 interfaces in its code
+        and Kconfig file, and it numbers them 0 through 3. The Pi UARTs are
+        numbered 0 through 5, and UART 1 is not a PL011 UART (so this messes
+        with the existing numbering scheme). Finally, each UART base address
+        must be configured through the Kconfig options. I already have the
+        Raspberry Pi UART base addresses get configured based on the Pi's memory
+        setup configuration (low peripheral, legacy mode, etc.). I don't want to
+        code this logic again in Kconfig when it's already implemented in
+        pre-processor logic.
+      </p>
+      <p>
+        My idea was to turn the PL011 code into a library that could be included
+        by board-specific PL011 driver implementations. This would allow a
+        board-specific driver implementation to define as many or as few PL011
+        UART devices as the board supports, and number them however they want.
+        The driver code would have full control over setting the device fields
+        like baud rate, base address, etc, using custom logic. Once all the
+        devices are statically initialized, they could be registered using
+        <code> pl011_uart_register() </code>
+        which is a wrapper around the standard
+        <code> uart_register() </code>
+        and which initializes the device's
+        <code> ops </code>
+        member with the PL011 driver ops which are static and contained within
+        the
+        <code> uart_pl011.c </code>
+        file. This way developers don't need to duplicate that code but can
+        still get more control over their PL011 driver implementation.
+      </p>
+      <p>
+        This change would be good to make now before too many boards rely on the
+        PL011 driver that's already implemented. Since PL011 is pretty standard,
+        it would be useful for future boards/chip implementations. I raised this
+        issue on the NuttX GitHub repository to get some initial feedback
+        <a href="https://github.com/apache/nuttx/issues/12901"> here </a>
+        . It seemed positively received, so I will now be spending some time
+        changing the logic over to a library and modifying the QEMU/Goldfish
+        code to construct their own drivers using the new library. Those changes
+        should be relatively small since the driver isn't very involved for
+        those boards. Most of the work will be changing the Kconfig/defconfig
+        files.
+      </p>
+      <p>
+        I changed the implementation and re-wrote the arm64 serial driver for
+        QEMU, everything booted just fine. I repeated the same process for the
+        ARMv7 QEMU serial driver and it doesn't work correctly. I am trying to
+        debug why.
+      </p>
+      <h2 id="day13">Day 13: 2024-08-21</h2>
+      <p>
+        While I wait for my changes to make the PL011 driver more extensible, I
+        went back to developing an I2C driver. I am successfully able to detect
+        the sensors on the I2C bus using the
+        <code> i2c </code>
+        tool provided by the NuttX apps. This is a great first step.
+      </p>
+      <p>
+        However, if I then try to use
+        <code> i2c dump </code>
+        to read the contents of an EEPROM (which was detected) on the I2C bus, I
+        get a failure and then the devices are no longer visible after executing
+        the
+        <code> i2c dev </code>
+        command until after reboot. This indicates to me that there's probably
+        something wrong with my write operations.
+      </p>
+      <h2 id="day14">Day 14: 2024-08-23</h2>
+      <p>
+        After playing around some more, I've actually been able to dump the
+        EEPROM contents over I2C using the driver I implemented. I'm not really
+        sure why, but when I provide the
+        <code> -r </code>
+        register option, the transfer fails and then I'm no longer able to dump
+        anything. This means my I2C driver works, but there must be some kind of
+        internal state problem that isn't being reset enough to continue
+        writing/reading.
+      </p>
+      <p>
+        I noticed that the send operations are finishing prematurely because the
+        <code> TXW </code>
+        (TX FIFO needs writing) interrupts were prematurely posting the
+        <code> wait </code>
+        for interrupt semaphore, when instead I needed to wait for the
+        <code> DONE </code>
+        interrupt. After fixing this issue, I still encounter the problem were
+        all of the receive operations after a send operation do nothing but
+        return an error. I'll have to debug further with more logging.
+      </p>
+      <h2 id="conclusion">Conclusion</h2>
+      <p>
+        The implementation for the Raspberry Pi 4B does not end here; there are
+        significantly more peripherals that need code written. However, getting
+        NSH to show up on boot and the system passing OSTest was enough to
+        successfully merge my implementation into the NuttX kernel. You can see
+        the
+        <a href="https://github.com/apache/nuttx/pull/15188">
+          pull request here
+        </a>
+        .
+      </p>
+      <p>
+        I may continue to make blog posts as I implement some of the remaining
+        features. Hopefully now that the implementation is in the kernel, other
+        people with Raspberry Pis available to them may start working on adding
+        more support for the Pi 4B. I know this blog post was a little chaotic
+        with me hopping between tasks any time I hit a roadblock, but hopefully
+        it's still of some use and gave you an indication of how to troubleshoot
+        the porting process. I anticipate future posts will be a little less
+        chaotic since I can now pick a single peripheral to work on and hack
+        away at it.
+      </p>
     </main>
-</body>
-
+  </body>
 </html>

@@ -1,3 +1,4 @@
+import copy
 from bs4 import BeautifulSoup
 from .modules.blog_post import BlogPost
 
@@ -25,7 +26,7 @@ def update_blogpage(posts: list[BlogPost], blogpage: str, container_id: str) -> 
         post_container.append(BeautifulSoup(post.post_link_entry(), "html.parser"))
 
     with open(blogpage, "w") as file:
-        file.write(blog_soup.prettify())
+        file.write(blog_soup.prettify(formatter="html"))
 
 
 def update_rss(posts: list[BlogPost], rss: str) -> None:
@@ -49,7 +50,7 @@ def update_rss(posts: list[BlogPost], rss: str) -> None:
 
     # Overwrite RSS feed with new changes
     with open(rss, "w") as file:
-        file.write(rss_feed.prettify())
+        file.write(rss_feed.prettify(formatter="html"))
 
 
 def html_string(template: str, target: str, substr: str) -> None:
@@ -72,3 +73,77 @@ def html_string(template: str, target: str, substr: str) -> None:
     # Write the target back
     with open(target, "w") as file:
         file.write(target_str)
+
+
+def inject_navbar(nav_template: str, files: list[str]) -> None:
+    """
+    Injects the HTML required for the navbar into the HTML files. Injects the navbar as the first element in the <body>
+    tag.
+    :param nav_template: The HTML file containing the template for the navbar to be included everywhere.
+    :param files: The list of files to inject the navbar into.
+    """
+
+    with open(nav_template, "r") as file:
+        nav = BeautifulSoup(file, "html.parser")
+
+    # Inject it into all the files
+    for page in files:
+
+        with open(page, "r") as file:
+            soup = BeautifulSoup(file, "html.parser")
+
+        # Check if the navbar item is already there, in which case we should remove it
+
+        existing_nav = soup.find("div", {"id": "navbar"})
+        if existing_nav is not None:
+            existing_nav.extract()
+
+        # Add the navbar template to the beginning of the body
+
+        body = soup.find("body")
+        if body is None:
+            raise ValueError(f"Page {page} does not have a body tag!")
+
+        body.insert(0, copy.copy(nav))
+
+        with open(page, "w") as file:
+            file.write(soup.prettify(formatter="html"))
+
+        print(f"Processed {page}")
+
+
+def inject_title(title_template: str, files: list[str]) -> None:
+    """
+    Injects the HTML required for the title into the HTML files. Injects the title as the first element in the <body>
+    tag.
+    :param nav_template: The HTML file containing the template for the title to be included everywhere.
+    :param files: The list of files to inject the title into.
+    """
+
+    with open(title_template, "r") as file:
+        title = BeautifulSoup(file, "html.parser")
+
+    # Inject it into all the files
+    for page in files:
+
+        with open(page, "r") as file:
+            soup = BeautifulSoup(file, "html.parser")
+
+        # Check if the title item is already there, in which case we should remove it
+
+        existing_title = soup.find("h1", {"id": "site-title"})
+        if existing_title is not None:
+            existing_title.extract()
+
+        # Add the title template to the beginning of the body
+
+        body = soup.find("body")
+        if body is None:
+            raise ValueError(f"Page {page} does not have a body tag!")
+
+        body.insert(0, copy.copy(title))
+
+        with open(page, "w") as file:
+            file.write(soup.prettify(formatter="html"))
+
+        print(f"Processed {page}")

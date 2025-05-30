@@ -16,10 +16,15 @@ jobs:
     - name: Show files
       run:  set ; pwd ; ls -l
 
-    - name: Add articles
+    - name: Install requirements
       run:  |
         pip install -r requirements.txt;
-        python3 build.py
+        sudo apt install prettier
+
+    - name: Build static pages
+      run:  |
+        python3 build.py;
+        ./prettify.sh
 
     - name: Commit GitHub Pages
       uses: EndBug/add-and-commit@v9
