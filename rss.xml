@@ -11,19 +11,20 @@
    https://linguini1.github.io/
   </link>
  </channel>
+ <!--Post entries go here-->
  <item>
   <title>
-   The first post
+   FreeCAD and 3D Printing
   </title>
   <link>
-   https://linguini1.github.io/blog/2024/12/21/the_first_post.html
+   https://linguini1.github.io/blog/2025/04/19/freecad_and_3d_printing.html
   </link>
   <description>
-   I've finally gotten around to turning my website into a completely static site that just uses vanilla
-            JavaScript, HTML and C...
+   After spending time 3D modelling my L1 certification rocket in Solidworks using my university rocketry team's
+        subscription, I star...
   </description>
   <pubDate>
-   Sat, 21 Dec 2024 00:00:00
+   Sat, 19 Apr 2025 00:00:00
   </pubDate>
  </item>
  <item>
@@ -35,7 +36,7 @@
   </link>
   <description>
    When I was getting into RTOSs, the first RTOS I experimented with was Blackberry's QNX. It's a microkernel,
-            POSIX compliant,...
+            POSIX complian...
   </description>
   <pubDate>
    Wed, 25 Dec 2024 00:00:00
@@ -43,17 +44,17 @@
  </item>
  <item>
   <title>
-   FreeCAD and 3D Printing
+   The first post
   </title>
   <link>
-   https://linguini1.github.io/blog/2025/04/19/freecad_and_3d_printing.html
+   https://linguini1.github.io/blog/2024/12/21/the_first_post.html
   </link>
   <description>
-   After spending time 3D modelling my L1 certification rocket in Solidworks using my university rocketry team's
-        subscription, I starte...
+   I've finally gotten around to turning my website into a completely static site that just uses vanilla
+            JavaScript, HTML and...
   </description>
   <pubDate>
-   Sat, 19 Apr 2025 00:00:00
+   Sat, 21 Dec 2024 00:00:00
   </pubDate>
  </item>
 </rss>
