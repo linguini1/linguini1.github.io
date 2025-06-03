@@ -39,11 +39,13 @@ def update_rss(posts: list[BlogPost], rss: str) -> None:
     with open(rss, "r") as file:
         rss_feed = BeautifulSoup(file, "xml")
 
-    rss_tag = rss_feed.select_one("rss")
+    rss_tag = rss_feed.select_one("rss > channel")
     if rss_tag is None:
-        raise ValueError(f"RSS feed file '{rss}' is missing the 'rss' tag.")
+        raise ValueError(f"RSS feed file '{rss}' is missing the 'rss > channel' tag.")
 
-    rss_tag.clear()
+    # Remove all item tags
+    for tag in rss_tag.find_all("item"):
+        tag.extract()
 
     for post in posts:
         rss_tag.append(BeautifulSoup(post.rss_entry(), "xml"))
