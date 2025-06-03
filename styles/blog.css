@@ -48,3 +48,8 @@
     margin: 0;
     margin-top: 0.5rem;
 }
+
+main {
+  --max-width: 100em;
+  padding: 0 min(30%, calc((100% - var(--max-width)) / 2));
+}

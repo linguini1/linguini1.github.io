@@ -18,3 +18,8 @@
     width: 40%;
     margin-right: 1em;
 }
+
+main {
+  --max-width: 80em;
+  padding: 0 min(30%, calc((100% - var(--max-width)) / 2));
+}
