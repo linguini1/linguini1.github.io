@@ -7,7 +7,7 @@ from typing import Self
 import datetime as dt
 from bs4 import BeautifulSoup
 
-DEFAULT_MAX_DESC_LEN: int = 400  # Default maximum description length
+DEFAULT_MAX_DESC_LEN: int = 1024  # Default maximum description length
 RSS_DATETIME_FORMAT: str = "%Y %H:%M:%S %z"
 SITE_LINK: str = "https://linguini1.github.io"
 
