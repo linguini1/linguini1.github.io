@@ -86,6 +86,7 @@ class BlogPost:
         rss = f"""
         <item>
             <title>{self.title}</title>
+            <author>Matteo Golin</author>
             <link>{SITE_LINK}/{self.__path}</link>
             <description>{self.description()}</descripton>
             <pubDate>{self.__rss_pubdate()}</pubDate>
