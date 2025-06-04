@@ -2,18 +2,18 @@
 <html>
   <head>
     <link href="/styles/blog-post.css" rel="stylesheet" />
-    <title>Matteo Golin</title>
+    <title> Matteo Golin </title>
     <link href="/styles/global.css" rel="stylesheet" />
     <link href="/styles/navbar.css" rel="stylesheet" />
     <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml" />
     <script src="/scripts/navbar.js"></script>
   </head>
   <body>
-    <h1 id="site-title">Matteo Golin</h1>
+    <h1 id="site-title"> Matteo Golin </h1>
     <div id="navbar">
       <div id="navbar-toggle">
-        <div id="navbar-toggle-ball" onclick="swap_colour()"></div>
-        <div id="navbar-toggle-socket"></div>
+        <div id="navbar-toggle-ball" onclick="swap_colour()"> </div>
+        <div id="navbar-toggle-socket"> </div>
       </div>
       <div id="navbar-pages">
         <a class="raise-button" href="/"> Home </a>
@@ -84,7 +84,7 @@
       </div>
     </div>
     <main>
-      <h1>My Favourite QNX Feature</h1>
+      <h1> My Favourite QNX Feature </h1>
       <p>
         Working on a project with my university's rocketry team got me thinking
         about my favourite QNX feature from when I was playing with that RTOS.
@@ -133,10 +133,10 @@
       <p>
         As an example of what you can do with Qnet, imagine some character
         device for a serial driver. If you
-        <code>echo</code>
+        <code> echo </code>
         into the file, you write some output on the serial device (let's say
         UART). If you
-        <code>cat</code>
+        <code> cat </code>
         the device, you listen to the serial output.
       </p>
       <pre><code>$ ls /dev
@@ -149,7 +149,7 @@ world!</code></pre>
         other machines running Qnet on the network. So let's say that in
         addition to our machine, there is another one running Qnet that has a
         serial device
-        <code>/dev/ser1</code>
+        <code> /dev/ser1 </code>
         . Let's say it has the hostname "machineb". We can run the following
         commands from our machine:
       </p>
@@ -161,14 +161,14 @@ world!</code></pre>
         machine running Qnet simply by using the right pathname prefix to
         identify the machine you want to interact with. All discoverable hosts
         are mounted in a file system under
-        <code>/net/hostname</code>
+        <code> /net/hostname </code>
         by Qnet. This is a toy example with a fake serial device, but it works
         for every single driver.
       </p>
       <p>
         Let's say you wrote some command line utility for scanning the I2C bus
         called
-        <code>scanner</code>
+        <code> scanner </code>
         , and it works locally. The only argument it takes is the file path to
         the I2C bus you want to scan. Well, with absolutely no changes to your
         binary (which was written in POSIX C, perhaps even ported from another
@@ -177,9 +177,9 @@ world!</code></pre>
         provided you set up the network you're using properly to allow both
         devices to connect to each other and be discoverable. The only change is
         running
-        <code>scanner /net/machineb/dev/i2c0</code>
+        <code> scanner /net/machineb/dev/i2c0 </code>
         instead of
-        <code>scanner /dev/i2c0</code>
+        <code> scanner /dev/i2c0 </code>
         . Qnet handles everything else under the hood by passing kernel message
         over the network instead of on the local machine.
       </p>
@@ -197,9 +197,9 @@ world!</code></pre>
         Unfortunately, it appears that Qnet has been discontinued in the newer
         release of QNX 8.0 (Qnet was present on 7.1) because of the networking
         stack changing to
-        <code>io-sock</code>
+        <code> io-sock </code>
         from
-        <code>io-pkt</code>
+        <code> io-pkt </code>
         . I very much hope they bring it back at some point, since it was an
         incredibly powerful tool.
       </p>
@@ -225,13 +225,13 @@ world!</code></pre>
           src="https://docs.wiznet.io/assets/images/w5500_evb_pico_side-da676c5d9c41adedc0469b9f1810b81b.png"
           width="60%"
         />
-        <p>The W5500-EVB Pico</p>
+        <p> The W5500-EVB Pico </p>
       </div>
       <p>
         I thought that since the device was connected to the network during
         regular operation, it would be ideal to have the device output logging
         information over the network instead. NuttX's
-        <code>syslog</code>
+        <code> syslog </code>
         implementation implements many different sink types, but among them is
         not a network sink. I thought immediately of how easy it would be to
         implement using Qnet, and then even how I would be able to implement the
@@ -241,22 +241,22 @@ world!</code></pre>
         However, QNX is not the easiest system to use and using Qnet for such an
         application (while very easy) would likely be overkill. While I figure
         out what the best way to implement a
-        <code>syslog</code>
+        <code> syslog </code>
         network sink would be, I'm wondering how something like Qnet could be
         implemented for NuttX. Maybe some agreed upon protocol between network
         stacks that can send information from
-        <code>read</code>
+        <code> read </code>
         ,
-        <code>write</code>
+        <code> write </code>
         ,
-        <code>open</code>
+        <code> open </code>
         ,
-        <code>close</code>
+        <code> close </code>
         ,
-        <code>ioctl</code>
+        <code> ioctl </code>
         (and etc.) calls over the network for call and response. That way paths
         with
-        <code>/net/hostname</code>
+        <code> /net/hostname </code>
         prefixes could possibly be intercepted by the file system layer and have
         any calls performed on them forwarded to the correct machine.
       </p>
