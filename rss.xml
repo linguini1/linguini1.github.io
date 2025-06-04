@@ -25,9 +25,10 @@
     https://linguini1.github.io/blog/2025/06/03/qnet.html
    </link>
    <description>
-    Working on a project with my university's rocketry team got me thinking about my favourite QNX feature from when
-        I was playing with that RTOS. One of the primary things that makes QNX unique is the fact that it is a
-        microkernel ...
+    Working on a project with my university's rocketry team got me thinking
+        about my favourite QNX feature from when I was playing with that RTOS.
+        One of the primary things that makes QNX unique is the fact that it is a
+        micr...
    </description>
    <pubDate>
     Tue, 03 Jun 2025 00:00:00
@@ -47,7 +48,7 @@
     Recently, I wrote an SPI driver for the BCM2711 as part of my ongoing
         effort to introduce Raspberry Pi 4B support into the NuttX kernel. While
         the implementation was relatively straightforward just using the BCM2711
-        document...
+        docu...
    </description>
    <pubDate>
     Fri, 30 May 2025 00:00:00
@@ -67,7 +68,7 @@
     After spending time 3D modelling my L1 certification rocket in
         Solidworks using my university rocketry team's subscription, I started
         getting into modelling other things for use in various projects around
-        the team. The unive...
+        the team. The u...
    </description>
    <pubDate>
     Sat, 19 Apr 2025 00:00:00
@@ -87,7 +88,7 @@
     When I was getting into RTOSs, the first RTOS I experimented with was
         Blackberry's QNX. It's a microkernel, POSIX compliant, real-time
         operating system for embedded applications. However, I discovered soon
-        after that its mic...
+        after that its...
    </description>
    <pubDate>
     Wed, 25 Dec 2024 00:00:00
@@ -107,7 +108,7 @@
     I've finally gotten around to turning my website into a completely
         static site that just uses vanilla JavaScript, HTML and CSS, instead of
         relying on a huge React development environment and complex GitHub
-        deployment workflo...
+        deployment wor...
    </description>
    <pubDate>
     Sat, 21 Dec 2024 00:00:00
