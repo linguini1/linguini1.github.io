@@ -24,6 +24,9 @@ jobs:
     - name: Build static pages
       run:  |
         python3 build.py;
+
+    - name: Prettify build
+      run:  |
         ./prettify.sh
 
     - name: Commit GitHub Pages
