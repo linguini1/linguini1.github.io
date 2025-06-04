@@ -1,3 +1,3 @@
 #!/bin/bash
 
-find . -name "*.html" | xargs prettier --html-whitespace-sensitivity strict --write
+find . -name "*.html" | xargs prettier --write

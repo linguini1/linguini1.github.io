@@ -26,7 +26,7 @@ def update_blogpage(posts: list[BlogPost], blogpage: str, container_id: str) -> 
         post_container.append(BeautifulSoup(post.post_link_entry(), "html.parser"))
 
     with open(blogpage, "w") as file:
-        file.write(blog_soup.prettify(formatter="html"))
+        file.write(str(blog_soup))
 
 
 def update_rss(posts: list[BlogPost], rss: str) -> None:
@@ -52,7 +52,7 @@ def update_rss(posts: list[BlogPost], rss: str) -> None:
 
     # Overwrite RSS feed with new changes
     with open(rss, "w") as file:
-        file.write(rss_feed.prettify(formatter="html"))
+        file.write(rss_feed.prettify())
 
 
 def html_string(template: str, target: str, substr: str) -> None:
@@ -109,7 +109,7 @@ def inject_navbar(nav_template: str, files: list[str]) -> None:
         body.insert(0, copy.copy(nav))
 
         with open(page, "w") as file:
-            file.write(soup.prettify(formatter="html"))
+            file.write(str(soup))
 
 
 def inject_title(title_template: str, files: list[str]) -> None:
@@ -144,7 +144,7 @@ def inject_title(title_template: str, files: list[str]) -> None:
         body.insert(0, copy.copy(title))
 
         with open(page, "w") as file:
-            file.write(soup.prettify(formatter="html"))
+            file.write(str(soup))
 
 
 def inject_head(head: str, files: list[str]) -> None:
@@ -187,4 +187,4 @@ def inject_head(head: str, files: list[str]) -> None:
         head_tag.append(copy.copy(head_data))
 
         with open(page, "w") as file:
-            file.write(soup.prettify(formatter="html"))
+            file.write(str(soup))

@@ -1,24 +1,26 @@
 <!doctype html>
+
 <html>
   <head>
     <link href="/styles/blog-post.css" rel="stylesheet" />
-    <title> Matteo Golin </title>
+
+    <title>Matteo Golin</title>
     <link href="/styles/global.css" rel="stylesheet" />
     <link href="/styles/navbar.css" rel="stylesheet" />
     <link href="/assets/conwayPulsar.svg" rel="icon" type="image/svg+xml" />
     <script src="/scripts/navbar.js"></script>
   </head>
   <body>
-    <h1 id="site-title"> Matteo Golin </h1>
+    <h1 id="site-title">Matteo Golin</h1>
     <div id="navbar">
       <div id="navbar-toggle">
-        <div id="navbar-toggle-ball" onclick="swap_colour()"> </div>
-        <div id="navbar-toggle-socket"> </div>
+        <div id="navbar-toggle-ball" onclick="swap_colour()"></div>
+        <div id="navbar-toggle-socket"></div>
       </div>
       <div id="navbar-pages">
-        <a class="raise-button" href="/"> Home </a>
-        <a class="raise-button" href="/about.html"> About </a>
-        <a class="raise-button" href="/blog.html"> Blog </a>
+        <a class="raise-button" href="/">Home</a>
+        <a class="raise-button" href="/about.html">About</a>
+        <a class="raise-button" href="/blog.html">Blog</a>
       </div>
       <div id="navbar-socials">
         <a
@@ -84,7 +86,7 @@
       </div>
     </div>
     <main>
-      <h1> Porting NuttX to the Raspberry Pi 4B </h1>
+      <h1>Porting NuttX to the Raspberry Pi 4B</h1>
       <p>
         When I was getting into RTOSs, the first RTOS I experimented with was
         Blackberry's QNX. It's a microkernel, POSIX compliant, real-time
@@ -147,7 +149,7 @@
         </strong>
         Hopefully these entries are of some utility!
       </p>
-      <h3> Table of Contents </h3>
+      <h3>Table of Contents</h3>
       <ul style="display: flex; gap: 4rem; text-transform: uppercase">
         <div>
           <li>
@@ -196,7 +198,7 @@
           </li>
         </div>
       </ul>
-      <h2 id="day1"> Day 1: 2024-07-25 </h2>
+      <h2 id="day1">Day 1: 2024-07-25</h2>
       <p>
         I am beginning work on porting NuttX to the Raspberry Pi 4B. I had
         originally been using QNX on this platform, but after learning about
@@ -311,8 +313,8 @@
         time to read the porting guide and blog posts to see if it gives me a
         bearing on where to start.
       </p>
-      <p> </p>
-      <p> What information I've collected so far: </p>
+      <p></p>
+      <p>What information I've collected so far:</p>
       <p>
         The BCM2711 uses a quad-core Cortex-A72, 64-bit SoC at 1.5GHz. This uses
         the Armv8-A architecture (which I gather is the same as aarch64). This
@@ -339,8 +341,8 @@
         Watchdog interfaces are not implemented, and neither are some of the
         system timer interfaces. Nothing implemented for address environments.
       </p>
-      <p> Looks like SMP is implemented, not shared memory though. </p>
-      <h2 id="day2"> Day 2: 2024-07-26 </h2>
+      <p>Looks like SMP is implemented, not shared memory though.</p>
+      <h2 id="day2">Day 2: 2024-07-26</h2>
       <p>
         I had a chance to look through Lup's blog post about porting to the
         Pinephone, and noticed something interesting. One of the supported
@@ -360,7 +362,7 @@
         something similar for the Pinephone after writing some serial support,
         so that is where I'll start next.
       </p>
-      <h2 id="day3"> Day 3: 2024-07-27 </h2>
+      <h2 id="day3">Day 3: 2024-07-27</h2>
       <p>
         Reading through the article written by Lup on his serial driver, I
         remembered that the data sheet for the BCM2711 mentions a Mini-UART
@@ -497,7 +499,7 @@
         </a>
         to determine how to write a linker script for the Raspberry Pi 4B.
       </p>
-      <h2 id="day4"> Day 4: 2024-07-28 </h2>
+      <h2 id="day4">Day 4: 2024-07-28</h2>
       <p>
         It turns out the issue with the generated configuration file that I was
         having earlier was because I had forgotten to list the BCM2711 chip in
@@ -654,7 +656,7 @@
         something. No luck still, which means something is surely wrong with how
         the binary is being loaded.
       </p>
-      <h2 id="day5"> Day 5: 2024-07-29 </h2>
+      <h2 id="day5">Day 5: 2024-07-29</h2>
       <p>
         I noticed while reading through the Raspberry Pi OS tutorial that my
         base addresses for the peripherals were using the legacy addressing mode
@@ -696,7 +698,7 @@
         file (just an echo message for now), and also created the boiler plate
         files for the RPi 4B's port documentation on the NuttX website.
       </p>
-      <h2 id="day6"> Day 6: 2024-07-30 </h2>
+      <h2 id="day6">Day 6: 2024-07-30</h2>
       <p>
         It's clear from my attempts at booting with early printing enabled that
         I'm not going to get very far unless I actually gain an understanding of
@@ -716,12 +718,12 @@
         source files for the NuttX aarch64 implementation so I can see what
         happens at boot.
       </p>
-      <p> What I don't understand is: </p>
+      <p>What I don't understand is:</p>
       <ul>
-        <li> How to configure the MMU </li>
-        <li> If my linker script is done properly </li>
-        <li> How to configure interrupts properly </li>
-        <li> How the NuttX boot process works </li>
+        <li>How to configure the MMU</li>
+        <li>If my linker script is done properly</li>
+        <li>How to configure interrupts properly</li>
+        <li>How the NuttX boot process works</li>
       </ul>
       <p>
         Once I can figure these things out, I should be better equipped to get
@@ -875,7 +877,7 @@ ldr    x24, =(g_idle_stack + CONFIG_IDLETHREAD_STACKSIZE)</code></pre>
         some more reading about the boot process to help me figure out what's
         going on.
       </p>
-      <h2 id="day7"> Day 7: 2024-07-31 </h2>
+      <h2 id="day7">Day 7: 2024-07-31</h2>
       <p>
         Looking at the low-peripheral mode memory map from the BCM2711 data
         sheet again, I see that most of the RAM starts at 0x0 (besides one SDRAM
@@ -909,7 +911,7 @@ ldr    x24, =(g_idle_stack + CONFIG_IDLETHREAD_STACKSIZE)</code></pre>
         <code>start.elf</code>
         enabled.
       </p>
-      <h2 id="day8"> Day 8: 2024-08-02 </h2>
+      <h2 id="day8">Day 8: 2024-08-02</h2>
       <p>
         I am beginning to get frustrated by the early printing issues. I've
         checked the disassembly of the generated binary and confirmed that the
@@ -930,7 +932,7 @@ ldr    x24, =(g_idle_stack + CONFIG_IDLETHREAD_STACKSIZE)</code></pre>
         with my linker script or the way the program is being loaded, or
         possibly the initial value of the stack pointer. I am not sure.
       </p>
-      <h2 id="day9"> Day 9: 2024-08-04 </h2>
+      <h2 id="day9">Day 9: 2024-08-04</h2>
       <p>
         Finally, after much troubleshooting, I managed to boot the NuttX kernel
         on the Raspberry Pi 4 to the point where I can actually see the early
@@ -945,7 +947,7 @@ ldr    x24, =(g_idle_stack + CONFIG_IDLETHREAD_STACKSIZE)</code></pre>
         sworn I already tried that start address with no luck, but this is why
         you write down your troubleshooting steps I suppose.
       </p>
-      <p> Now I can see this error output during the boot process: </p>
+      <p>Now I can see this error output during the boot process:</p>
       <pre><code>----gic_validate_dist_version: No GIC version detect
 arm64_gic_initialize: no distributor detected, giving up ret=-19
 _assert: Current Version: NuttX  12.6.0-RC0 6791d4a1c4-dirty Aug  4 2024 00:38:21 arm64
@@ -1053,7 +1055,7 @@ arm64_fatal_error: reason = 0</code></pre>
         </a>
         .
       </p>
-      <h2 id="day10"> Day 10: 2024-08-05 </h2>
+      <h2 id="day10">Day 10: 2024-08-05</h2>
       <p>
         It seems the SError is a tricky one to reason about. It occurs when the
         system detects an unrecoverable fault, and it is asynchronous.
@@ -1214,7 +1216,7 @@ up_dump_register: SP_ELX:    0x4d2f40
 up_dump_register: TPIDR_EL0: 0x0               
 up_dump_register: TPIDR_EL1: 0x0               
 up_dump_register: EXE_DEPTH: 0x1</code></pre>
-      <p> Seems like we have a new exception happening to figure out. </p>
+      <p>Seems like we have a new exception happening to figure out.</p>
       <p>
         Looking at the ARM documentation for exceptions again, the
         <code>ESR_ELn</code>
@@ -1434,7 +1436,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         , the input doesn't appear until I generate some kind of input (like
         holding 'enter').
       </p>
-      <h2 id="day11"> Day 11: 2024-08-06 </h2>
+      <h2 id="day11">Day 11: 2024-08-06</h2>
       <p>
         After much annoyance, I had discovered some online forum posts about the
         BCM2835 having its TX and RX interrupts swapped in the data sheet. I
@@ -1484,7 +1486,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         functions for switching pin function, configuring pull-ups/pull-downs,
         etc. So logically, I think the next thing to implement would be GPIO.
       </p>
-      <h2 id="day12"> Day 12: 2024-08-11 </h2>
+      <h2 id="day12">Day 12: 2024-08-11</h2>
       <p>
         I have implemented the basic functionality for controlling GPIO pins.
         This includes a bunch of utilities in
@@ -1556,7 +1558,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         <code>NOSTOP</code>
         .
       </p>
-      <h2 id="day12"> Day 12: 2024-08-13 </h2>
+      <h2 id="day12">Day 12: 2024-08-13</h2>
       <p>
         Since I haven't made much headway debugging the I2C driver I was working
         on, I decided to take a break by implementing something easier: the
@@ -1630,7 +1632,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         ARMv7 QEMU serial driver and it doesn't work correctly. I am trying to
         debug why.
       </p>
-      <h2 id="day13"> Day 13: 2024-08-21 </h2>
+      <h2 id="day13">Day 13: 2024-08-21</h2>
       <p>
         While I wait for my changes to make the PL011 driver more extensible, I
         went back to developing an I2C driver. I am successfully able to detect
@@ -1648,7 +1650,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         command until after reboot. This indicates to me that there's probably
         something wrong with my write operations.
       </p>
-      <h2 id="day14"> Day 14: 2024-08-23 </h2>
+      <h2 id="day14">Day 14: 2024-08-23</h2>
       <p>
         After playing around some more, I've actually been able to dump the
         EEPROM contents over I2C using the driver I implemented. I'm not really
@@ -1670,7 +1672,7 @@ bcm2711_miniuart_txint: TXINT disabled, 00000002</code></pre>
         all of the receive operations after a send operation do nothing but
         return an error. I'll have to debug further with more logging.
       </p>
-      <h2 id="conclusion"> Conclusion </h2>
+      <h2 id="conclusion">Conclusion</h2>
       <p>
         The implementation for the Raspberry Pi 4B does not end here; there are
         significantly more peripherals that need code written. However, getting
