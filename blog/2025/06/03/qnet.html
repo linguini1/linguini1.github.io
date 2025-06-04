@@ -21,7 +21,10 @@
         <a class="raise-button" href="/blog.html"> Blog </a>
       </div>
       <div id="navbar-socials">
-        <a class="raise-button" href="https://www.linkedin.com/in/matteo-golin-94118021b/">
+        <a
+          class="raise-button"
+          href="https://www.linkedin.com/in/matteo-golin-94118021b/"
+        >
           <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
@@ -35,7 +38,11 @@
             ></path>
           </svg>
         </a>
-        <a class="raise-button" href="mailto:linguini@apache.org" id="apache-email">
+        <a
+          class="raise-button"
+          href="mailto:linguini@apache.org"
+          id="apache-email"
+        >
           <svg viewbox="0 0 256 512" xmlns="http://www.w3.org/2000/svg">
             <g>
               <path
@@ -67,7 +74,9 @@
             <g>
               <polygon points="0,127.5 0,274.219 104.8,206.1 	"></polygon>
               <polygon points="400,274.219 400,127.5 295.2,206.1 	"></polygon>
-              <polygon points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"></polygon>
+              <polygon
+                points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"
+              ></polygon>
               <polygon points="0,90 200,240 400,90 400,60 0,60 	"></polygon>
             </g>
           </svg>
@@ -77,126 +86,179 @@
     <main>
       <h1>My Favourite QNX Feature</h1>
       <p>
-        Working on a project with my university's rocketry team got me thinking about my favourite QNX feature from when
-        I was playing with that RTOS. One of the primary things that makes QNX unique is the fact that it is a
-        microkernel operating system. This means that the code which actually runs in "kernel mode" is very limited, so
-        things like device drivers run entirely in user mode (and are registered 'on-demand'). The kernel operates via
-        <a href="https://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.getting_started/topic/s1_msg.html"
-          >message passing</a
-        >, which also means its very scalable. There is a limited set of messages to pass, and everything else is built
-        on top of them. This makes scaling to SMP systems easier, but also unlocks some special features, including my
-        favourite QNX feature.
+        Working on a project with my university's rocketry team got me thinking
+        about my favourite QNX feature from when I was playing with that RTOS.
+        One of the primary things that makes QNX unique is the fact that it is a
+        microkernel operating system. This means that the code which actually
+        runs in "kernel mode" is very limited, so things like device drivers run
+        entirely in user mode (and are registered 'on-demand'). The kernel
+        operates via
+        <a
+          href="https://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.getting_started/topic/s1_msg.html"
+        >
+          message passing
+        </a>
+        , which also means its very scalable. There is a limited set of messages
+        to pass, and everything else is built on top of them. This makes scaling
+        to SMP systems easier, but also unlocks some special features, including
+        my favourite QNX feature.
       </p>
-
       <div class="figure">
         <img
-          src="https://www.qnx.com/developers/docs/7.1/com.qnx.doc.neutrino.getting_started/images/mpx1.png"
           alt="A diagram of QNX message passing showing several components connected to the microkernel"
+          src="https://www.qnx.com/developers/docs/7.1/com.qnx.doc.neutrino.getting_started/images/mpx1.png"
           width="50%"
         />
-        <p>QNX Neutrino's modular architecture (diagram taken from QNX 7.10 documentation)</p>
+        <p>
+          QNX Neutrino's modular architecture (diagram taken from QNX 7.10
+          documentation)
+        </p>
       </div>
-
       <p>
-        The messages passed within the kernel to accomplish tasks are (as the name suggests) just messages. This means
-        that the medium through which they are passed can be changed. Enter
-        <a href="https://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.prog/topic/qnet.html">Qnet</a>, a special
-        module added to the QNX networking stack that allows kernel messages to be passed via the network. Personally,
-        Qnet was (and still probably is) one of the coolest things I have ever seen software used for. Since it just
-        becomes an additional medium for passing kernel messages, it allows QNX systems to do crazy things over the
-        network completely unbeknownst to the user program.
+        The messages passed within the kernel to accomplish tasks are (as the
+        name suggests) just messages. This means that the medium through which
+        they are passed can be changed. Enter
+        <a
+          href="https://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.prog/topic/qnet.html"
+        >
+          Qnet
+        </a>
+        , a special module added to the QNX networking stack that allows kernel
+        messages to be passed via the network. Personally, Qnet was (and still
+        probably is) one of the coolest things I have ever seen software used
+        for. Since it just becomes an additional medium for passing kernel
+        messages, it allows QNX systems to do crazy things over the network
+        completely unbeknownst to the user program.
       </p>
-
       <p>
-        As an example of what you can do with Qnet, imagine some character device for a serial driver. If you
-        <code>echo</code> into the file, you write some output on the serial device (let's say UART). If you
-        <code>cat</code> the device, you listen to the serial output.
+        As an example of what you can do with Qnet, imagine some character
+        device for a serial driver. If you
+        <code> echo </code>
+        into the file, you write some output on the serial device (let's say
+        UART). If you
+        <code> cat </code>
+        the device, you listen to the serial output.
       </p>
-
       <pre><code>$ ls /dev
 ser0
-$ echo "hello" > /dev/ser0
+$ echo "hello" &gt; /dev/ser0
 $ cat /dev/ser0
 world!</code></pre>
-
       <p>
-        Now, if you're running Qnet, you are able to see the file systems of other machines running Qnet on the network.
-        So let's say that in addition to our machine, there is another one running Qnet that has a serial device
-        <code>/dev/ser1</code>. Let's say it has the hostname "machineb". We can run the following commands from our
-        machine:
+        Now, if you're running Qnet, you are able to see the file systems of
+        other machines running Qnet on the network. So let's say that in
+        addition to our machine, there is another one running Qnet that has a
+        serial device
+        <code> /dev/ser1 </code>
+        . Let's say it has the hostname "machineb". We can run the following
+        commands from our machine:
       </p>
-
-      <pre><code>$ echo "hello" > /net/machineb/dev/ser1
+      <pre><code>$ echo "hello" &gt; /net/machineb/dev/ser1
 $ cat /net/machineb/dev/ser1
 world!</code></pre>
-
       <p>
-        Yes, that's right! You can interact with any character device on another machine running Qnet simply by using
-        the right pathname prefix to identify the machine you want to interact with. All discoverable hosts are mounted
-        in a file system under <code>/net/hostname</code> by Qnet. This is a toy example with a fake serial device, but
-        it works for every single driver.
+        Yes, that's right! You can interact with any character device on another
+        machine running Qnet simply by using the right pathname prefix to
+        identify the machine you want to interact with. All discoverable hosts
+        are mounted in a file system under
+        <code> /net/hostname </code>
+        by Qnet. This is a toy example with a fake serial device, but it works
+        for every single driver.
       </p>
-
       <p>
-        Let's say you wrote some command line utility for scanning the I2C bus called <code>scanner</code>, and it works
-        locally. The only argument it takes is the file path to the I2C bus you want to scan. Well, with absolutely no
-        changes to your binary (which was written in POSIX C, perhaps even ported from another POSIX OS), you can use it
-        to scan the I2C bus connected to Machine B. This works even if you are in Canada and Machine B is in Russia,
-        provided you set up the network you're using properly to allow both devices to connect to each other and be
-        discoverable. The only change is running <code>scanner /net/machineb/dev/i2c0</code> instead of
-        <code>scanner /dev/i2c0</code>. Qnet handles everything else under the hood by passing kernel message over the
-        network instead of on the local machine.
+        Let's say you wrote some command line utility for scanning the I2C bus
+        called
+        <code> scanner </code>
+        , and it works locally. The only argument it takes is the file path to
+        the I2C bus you want to scan. Well, with absolutely no changes to your
+        binary (which was written in POSIX C, perhaps even ported from another
+        POSIX OS), you can use it to scan the I2C bus connected to Machine B.
+        This works even if you are in Canada and Machine B is in Russia,
+        provided you set up the network you're using properly to allow both
+        devices to connect to each other and be discoverable. The only change is
+        running
+        <code> scanner /net/machineb/dev/i2c0 </code>
+        instead of
+        <code> scanner /dev/i2c0 </code>
+        . Qnet handles everything else under the hood by passing kernel message
+        over the network instead of on the local machine.
       </p>
-
       <p>
-        As you can imagine, this is an incredible advantage for distributed systems. Binaries written in POSIX C, even
-        ported from Linux, now work over the network to interact with other machines for completely free (free as in no
-        additional work, a QNX license costs a lot of money). Of course this comes with some security risks, since Qnet
-        is not incredibly secure and advertises other machines running Qnet on the network. However, it is an extremely
-        powerful tool nonetheless and is a very good example of the power of a microkernel.
+        As you can imagine, this is an incredible advantage for distributed
+        systems. Binaries written in POSIX C, even ported from Linux, now work
+        over the network to interact with other machines for completely free
+        (free as in no additional work, a QNX license costs a lot of money). Of
+        course this comes with some security risks, since Qnet is not incredibly
+        secure and advertises other machines running Qnet on the network.
+        However, it is an extremely powerful tool nonetheless and is a very good
+        example of the power of a microkernel.
       </p>
-
       <p>
-        Unfortunately, it appears that Qnet has been discontinued in the newer release of QNX 8.0 (Qnet was present on
-        7.1) because of the networking stack changing to <code>io-sock</code> from <code>io-pkt</code>. I very much hope
-        they bring it back at some point, since it was an incredibly powerful tool.
+        Unfortunately, it appears that Qnet has been discontinued in the newer
+        release of QNX 8.0 (Qnet was present on 7.1) because of the networking
+        stack changing to
+        <code> io-sock </code>
+        from
+        <code> io-pkt </code>
+        . I very much hope they bring it back at some point, since it was an
+        incredibly powerful tool.
       </p>
-
       <p>
-        I began thinking of this after working the rocketry team's network-operated control system. The system uses
-        W5500-EVB Picos on both the controller side and the pad side (controlled side) to act as network accessible
-        MCUs. I wrote a message specification for messages passed between the two, used to define actuation commands as
-        well as telemetry. However, I was thinking that it would be nice to have a log store to record any logs leading
-        up to and after any failures, to better diagnose system issues while in production. The production system is
-        remote controlled because it controls a highly pressurized system for a hybrid rocket engine, so it's not
-        possible to be up close monitoring a serial output stream. I thought of logging to a SmartFS flash file system
-        on board the device, but the W5500-EVB Pico does not have very much memory. It would also require grabbing the
-        logs off the device post-failure somehow, and ensuring that they aren't overwritten at boot.
+        I began thinking of this after working the rocketry team's
+        network-operated control system. The system uses W5500-EVB Picos on both
+        the controller side and the pad side (controlled side) to act as network
+        accessible MCUs. I wrote a message specification for messages passed
+        between the two, used to define actuation commands as well as telemetry.
+        However, I was thinking that it would be nice to have a log store to
+        record any logs leading up to and after any failures, to better diagnose
+        system issues while in production. The production system is remote
+        controlled because it controls a highly pressurized system for a hybrid
+        rocket engine, so it's not possible to be up close monitoring a serial
+        output stream. I thought of logging to a SmartFS flash file system on
+        board the device, but the W5500-EVB Pico does not have very much memory.
+        It would also require grabbing the logs off the device post-failure
+        somehow, and ensuring that they aren't overwritten at boot.
       </p>
-
       <div class="figure">
         <img
-          src="https://docs.wiznet.io/assets/images/w5500_evb_pico_side-da676c5d9c41adedc0469b9f1810b81b.png"
           alt="The W5500-EVB Pico"
+          src="https://docs.wiznet.io/assets/images/w5500_evb_pico_side-da676c5d9c41adedc0469b9f1810b81b.png"
           width="60%"
         />
         <p>The W5500-EVB Pico</p>
       </div>
-
       <p>
-        I thought that since the device was connected to the network during regular operation, it would be ideal to have
-        the device output logging information over the network instead. NuttX's <code>syslog</code> implementation
-        implements many different sink types, but among them is not a network sink. I thought immediately of how easy it
-        would be to implement using Qnet, and then even how I would be able to implement the control client by just
-        using Qnet paths to directly interact with the actuator GPIO character devices on the pad device. I would even
-        be able to read the device drivers for all of the sensors directly that way! However, QNX is not the easiest
-        system to use and using Qnet for such an application (while very easy) would likely be overkill. While I figure
-        out what the best way to implement a <code>syslog</code> network sink would be, I'm wondering how something like
-        Qnet could be implemented for NuttX. Maybe some agreed upon protocol between network stacks that can send
-        information from <code>read</code>, <code>write</code>, <code>open</code>, <code>close</code>,
-        <code>ioctl</code> (and etc.) calls over the network for call and response. That way paths with
-        <code>/net/hostname</code> prefixes could possibly be intercepted by the file system layer and have any calls
-        performed on them forwarded to the correct machine.
+        I thought that since the device was connected to the network during
+        regular operation, it would be ideal to have the device output logging
+        information over the network instead. NuttX's
+        <code> syslog </code>
+        implementation implements many different sink types, but among them is
+        not a network sink. I thought immediately of how easy it would be to
+        implement using Qnet, and then even how I would be able to implement the
+        control client by just using Qnet paths to directly interact with the
+        actuator GPIO character devices on the pad device. I would even be able
+        to read the device drivers for all of the sensors directly that way!
+        However, QNX is not the easiest system to use and using Qnet for such an
+        application (while very easy) would likely be overkill. While I figure
+        out what the best way to implement a
+        <code> syslog </code>
+        network sink would be, I'm wondering how something like Qnet could be
+        implemented for NuttX. Maybe some agreed upon protocol between network
+        stacks that can send information from
+        <code> read </code>
+        ,
+        <code> write </code>
+        ,
+        <code> open </code>
+        ,
+        <code> close </code>
+        ,
+        <code> ioctl </code>
+        (and etc.) calls over the network for call and response. That way paths
+        with
+        <code> /net/hostname </code>
+        prefixes could possibly be intercepted by the file system layer and have
+        any calls performed on them forwarded to the correct machine.
       </p>
     </main>
   </body>
