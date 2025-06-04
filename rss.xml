@@ -16,6 +16,25 @@
   </language>
   <item>
    <title>
+    My Favourite QNX Feature
+   </title>
+   <author>
+    Matteo Golin
+   </author>
+   <link>
+    https://linguini1.github.io/blog/2025/06/03/qnet.html
+   </link>
+   <description>
+    Working on a project with my university's rocketry team got me thinking about my favourite QNX feature from when
+        I was playing with that RTOS.
+      ...
+   </description>
+   <pubDate>
+    Tue, 03 Jun 2025 00:00:00
+   </pubDate>
+  </item>
+  <item>
+   <title>
     Writing a NuttX SPI Driver for the BCM2711
    </title>
    <author>
