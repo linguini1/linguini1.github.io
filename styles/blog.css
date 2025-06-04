@@ -1,52 +1,59 @@
 /* Blog posts */
 
 #blog-posts {
-    --gap-width: 2rem;
-    display: flex;
-    flex-flow: row wrap;
-    align-items: left;
-    justify-content: left;
-    gap: var(--gap-width);
+  --gap-width: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: center;
+  gap: var(--gap-width);
 }
 
 /* Blog entry container */
 
 .blog-entry {
-    border: solid;
-    border-color: var(--fg);
-    border-width: 0 0 3px 0;
-    min-width: 35rem;
-    max-width: max(calc(50% - 0.5 * var(--gap-width)), 35rem);
+  border: solid;
+  border-color: var(--fg);
+  border-width: 0 0 3px 0;
+  min-width: 35rem;
+  flex: auto;
+  --half-width: calc(50% - 0.5 * var(--gap-width));
+  /* 
+  * If half-width < 35rem, expand to full-width.
+  * Otherwise take up only half-width to have two per column.
+  */
+  width: var(--half-width);
 }
 
 /* Blog post entry container for title and date */
 
 .blog-entry-title-container {
-    justify-content: left;
+  justify-content: left;
 }
 
 /* Blog post entry title link */
 
 .blog-entry a {
-    font-size: 2rem;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin: 0 0 0 0;
+  font-size: 2rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0 0 0 0;
 }
 
 .blog-entry a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Blog entry date */
 
 .blog-entry-date {
-    font-size: 1.2rem;
-    align-self: flex-end;
-    font-weight: 300;
-    margin: 0;
-    margin-top: 0.5rem;
+  font-size: 1.2rem;
+  align-self: flex-end;
+  font-weight: 300;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 
 main {
