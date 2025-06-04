@@ -114,10 +114,10 @@
         You mark a "transfer active" bit and start writing data directly to the
         FIFO register. When you notice that the receive FIFO is getting full (by
         checking the
-        <code> RXR </code>
+        <code>RXR</code>
         bit), stop transmitting and read some data into your receive buffer
         until you've drained the FIFO (
-        <code> RXD </code>
+        <code>RXD</code>
         bit). Rinse and repeat until you're out of data, then mark the transfer
         as being over. It's also roughly equivalent between interrupt calls as
         well, and
@@ -133,7 +133,7 @@
         I won't claim that my implementation is the most efficient. For
         starters, it doesn't use DMA. I also lost a little bit of an
         optimization in my interrupt implementation, since my
-        <code> spi_fill_txfifo </code>
+        <code>spi_fill_txfifo</code>
         function only fills the transmit FIFO until the receive FIFO is &frac34;
         full. In reality, at the beginning of the transfer, we know that we can
         transmit until the receive FIFO is entirely full before reading it. I
@@ -162,12 +162,12 @@
         Raspberry Pi 4B device tree is used by the (proprietary) bootup firmware
         to initialize peripherals on the device. It has the option to load
         additional device tree overlays by specifying
-        <code> dtoverlay=name-of-overlay </code>
+        <code>dtoverlay=name-of-overlay</code>
         in the
-        <code> config.txt </code>
+        <code>config.txt</code>
         file. You also need to include the compiled overlay file on the SD card
         under the
-        <code> overlays </code>
+        <code>overlays</code>
         directory. It took me a while to figure that out, since the boot
         firmware does not report an error if it can't find the overlay file, it
         just says it opened the overlay file regardless. If you load it
@@ -189,7 +189,7 @@
         <a
           href="https://github.com/raspberrypi/firmware/blob/7e15dd42411d4185290b66eb9ccc581bebb04bf2/boot/overlays/README#L4875"
         >
-          <code> spi4-1cs </code>
+          <code>spi4-1cs</code>
         </a>
         overlay to try my driver on the SPI4 interface. However, it still didn't
         work. As it turns out, the BCM2711 startup firmware doesn't do
