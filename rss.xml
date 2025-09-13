@@ -16,6 +16,26 @@
   </language>
   <item>
    <title>
+    Implementing RFC5424 for NuttX
+   </title>
+   <author>
+    Matteo Golin
+   </author>
+   <link>
+    https://linguini1.github.io/blog/2025/09/13/syslog-rfc5424.html
+   </link>
+   <description>
+    Remember in my blog post about my favourite QNX feature I mentioned that I
+        wanted some way to have a syslog sink that wrote log messages to the network? Well, I did my
+        research after that blog post and happened across RFC5424,
+ ...
+   </description>
+   <pubDate>
+    Sat, 13 Sep 2025 00:00:00
+   </pubDate>
+  </item>
+  <item>
+   <title>
     My Favourite QNX Feature
    </title>
    <author>

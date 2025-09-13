@@ -3,6 +3,7 @@
 <html>
   <head>
     <link href="/styles/blog-post.css" rel="stylesheet" />
+
     <title>Matteo Golin</title>
     <link href="/styles/global.css" rel="stylesheet" />
     <link href="/styles/navbar.css" rel="stylesheet" />
@@ -22,7 +23,10 @@
         <a class="raise-button" href="/blog.html">Blog</a>
       </div>
       <div id="navbar-socials">
-        <a class="raise-button" href="https://www.linkedin.com/in/matteo-golin-94118021b/">
+        <a
+          class="raise-button"
+          href="https://www.linkedin.com/in/matteo-golin-94118021b/"
+        >
           <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
@@ -36,7 +40,11 @@
             ></path>
           </svg>
         </a>
-        <a class="raise-button" href="mailto:linguini@apache.org" id="apache-email">
+        <a
+          class="raise-button"
+          href="mailto:linguini@apache.org"
+          id="apache-email"
+        >
           <svg viewbox="0 0 256 512" xmlns="http://www.w3.org/2000/svg">
             <g>
               <path
@@ -68,7 +76,9 @@
             <g>
               <polygon points="0,127.5 0,274.219 104.8,206.1 	"></polygon>
               <polygon points="400,274.219 400,127.5 295.2,206.1 	"></polygon>
-              <polygon points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"></polygon>
+              <polygon
+                points="200,277.5 130.357,225.268 0,310 0,340 400,340 400,310 269.643,225.268 	"
+              ></polygon>
               <polygon points="0,90 200,240 400,90 400,60 0,60 	"></polygon>
             </g>
           </svg>
@@ -77,92 +87,114 @@
     </div>
     <main>
       <h1>Implementing RFC5424 for NuttX</h1>
-
       <p>
-        Remember in <a href="../../06/03/qnet.html">my blog post about my favourite QNX feature</a> I mentioned that I
-        wanted some way to have a <code>syslog</code> sink that wrote log messages to the network? Well, I did my
-        research after that blog post and happened across <a href="https://www.rfc-editor.org/rfc/rfc5424">RFC5424</a>,
-        which is a protocol for <code>syslog</code> that defines how logs can be sent/received in a networking context,
-        as well as a standard format for logs.
+        Remember in
+        <a href="../../06/03/qnet.html"
+          >my blog post about my favourite QNX feature</a
+        >
+        I mentioned that I wanted some way to have a <code>syslog</code> sink
+        that wrote log messages to the network? Well, I did my research after
+        that blog post and happened across
+        <a href="https://www.rfc-editor.org/rfc/rfc5424">RFC5424</a>, which is a
+        protocol for <code>syslog</code> that defines how logs can be
+        sent/received in a networking context, as well as a standard format for
+        logs.
       </p>
-
       <p>
-        As it turns out, something called <a href="https://linux.die.net/man/8/syslogd"><code>syslogd</code></a>
-        exists for system logging locally and remotely. There was a standard way for handling system logs to a remote
-        device. So, obviously, I had to implement this (or at least a subset) for NuttX as a tool for individuals in the
-        same situation that I was: wanting system log access in real-time over the network, but not willing/able to roll
-        their own method of doing it.
+        As it turns out, something called
+        <a href="https://linux.die.net/man/8/syslogd"><code>syslogd</code></a>
+        exists for system logging locally and remotely. There was a standard way
+        for handling system logs to a remote device. So, obviously, I had to
+        implement this (or at least a subset) for NuttX as a tool for
+        individuals in the same situation that I was: wanting system log access
+        in real-time over the network, but not willing/able to roll their own
+        method of doing it.
       </p>
-
       <p>
-        First I went ahead and wrote an implementation for RFC5424 formatting, which I documented
-        <a href="https://nuttx.apache.org/docs/latest/components/drivers/special/syslog.html#syslog-protocol-rfc-5424"
+        First I went ahead and wrote an implementation for RFC5424 formatting,
+        which I documented
+        <a
+          href="https://nuttx.apache.org/docs/latest/components/drivers/special/syslog.html#syslog-protocol-rfc-5424"
           >here on the NuttX website</a
-        >. The way I've done this is by providing a Kconfig option that forces the syslog formatting to follow the
-        RFC5424 standard. The user can still pick and choose which parts of the option specification they want to
-        include (i.e. omit timestamps if they want) because RFC5424 logs can get quite verbose very quickly, and many
-        NuttX devices are resource-constrained. The process for enforcing the formatting was quite straight-forward, and
-        just involved adding another source file to be used instead of the default syslog print logic when the user
-        selected the RFC5424 Kconfig option.
+        >. The way I've done this is by providing a Kconfig option that forces
+        the syslog formatting to follow the RFC5424 standard. The user can still
+        pick and choose which parts of the option specification they want to
+        include (i.e. omit timestamps if they want) because RFC5424 logs can get
+        quite verbose very quickly, and many NuttX devices are
+        resource-constrained. The process for enforcing the formatting was quite
+        straight-forward, and just involved adding another source file to be
+        used instead of the default syslog print logic when the user selected
+        the RFC5424 Kconfig option.
       </p>
-
       <p>
-        Writing the <code>syslogd</code> program was less straightforward, since the program described by the manpages
-        was designed for a Unix system assuming more features than is often used on a NuttX image. I resolved to
-        implement a small subset of the functionality, mostly because that was all I needed for my use case, and
-        partially because the remaining functionality required checking for many different features and I didn't want to
-        bother setting all that up.
+        Writing the <code>syslogd</code> program was less straightforward, since
+        the program described by the manpages was designed for a Unix system
+        assuming more features than is often used on a NuttX image. I resolved
+        to implement a small subset of the functionality, mostly because that
+        was all I needed for my use case, and partially because the remaining
+        functionality required checking for many different features and I didn't
+        want to bother setting all that up.
       </p>
-
       <p>
-        The main question for the implementation was how to get access to the system logs so that they could be sent by
-        this program over UDP (as the spec generally uses). The answer was having a dependency on the NuttX
-        <a href="https://nuttx.apache.org/docs/latest/components/drivers/special/syslog.html#ram-logging-device"
+        The main question for the implementation was how to get access to the
+        system logs so that they could be sent by this program over UDP (as the
+        spec generally uses). The answer was having a dependency on the NuttX
+        <a
+          href="https://nuttx.apache.org/docs/latest/components/drivers/special/syslog.html#ram-logging-device"
           ><code>RAMLOG</code></a
         >
-        implementation. The <code>RAMLOG</code> implementation uses a buffer of a pre-determined size to store printed
-        system logs in RAM. However, it also creates a device which can be read to consume the logs in the RAM buffer.
-        This is how the <code>dmesg</code> system utility works on NuttX. Now I was able to read from the
-        <code>RAMLOG</code> device within the <code>syslogd</code> utility and transmit each syslog message as one UDP
-        packet. The daemon spawns a copy of itself in the background once run and it simply loops while blocking on the
-        <code>RAMLOG</code> device, sending all of the complete syslog entries it receives to the configured IP address
-        over UDP. I've documented the <code>syslogd</code> program
-        <a href="https://nuttx.apache.org/docs/latest/applications/system/syslogd/index.html#syslogd"
+        implementation. The <code>RAMLOG</code> implementation uses a buffer of
+        a pre-determined size to store printed system logs in RAM. However, it
+        also creates a device which can be read to consume the logs in the RAM
+        buffer. This is how the <code>dmesg</code> system utility works on
+        NuttX. Now I was able to read from the <code>RAMLOG</code> device within
+        the <code>syslogd</code> utility and transmit each syslog message as one
+        UDP packet. The daemon spawns a copy of itself in the background once
+        run and it simply loops while blocking on the
+        <code>RAMLOG</code> device, sending all of the complete syslog entries
+        it receives to the configured IP address over UDP. I've documented the
+        <code>syslogd</code> program
+        <a
+          href="https://nuttx.apache.org/docs/latest/applications/system/syslogd/index.html#syslogd"
           >here on the NuttX website</a
         >.
       </p>
-
       <div class="figure">
         <img
-          src="https://static0.makeuseofimages.com/wordpress/wp-content/uploads/2022/07/Raspberry-Pi-Pico-W.jpg?q=50&fit=crop&w=1100&h=618&dpr=1.5"
           alt="A Raspberry Pi Pico W"
+          src="https://static0.makeuseofimages.com/wordpress/wp-content/uploads/2022/07/Raspberry-Pi-Pico-W.jpg?q=50&amp;fit=crop&amp;w=1100&amp;h=618&amp;dpr=1.5"
           width="60%"
         />
         <p>A Raspberry Pi Pico W</p>
       </div>
-
       <p>
-        It was very rewarding being able to run this properly on small devices. The test device I used was a Pi Pico W
-        connected to my home network. I enabled file-system logging at the <code>INFO</code> level, ran
-        <code>syslogd</code> and began poking around at the <code>/proc</code> file system to trigger some logs. In the
-        meantime, I had Wireshark running on my host computer and was sniffing the packets being sent from the Pico W.
-        Sure enough, Wireshark detected them as valid RFC5424 packets and even parsed out the information properly!
+        It was very rewarding being able to run this properly on small devices.
+        The test device I used was a Pi Pico W connected to my home network. I
+        enabled file-system logging at the <code>INFO</code> level, ran
+        <code>syslogd</code> and began poking around at the
+        <code>/proc</code> file system to trigger some logs. In the meantime, I
+        had Wireshark running on my host computer and was sniffing the packets
+        being sent from the Pico W. Sure enough, Wireshark detected them as
+        valid RFC5424 packets and even parsed out the information properly!
       </p>
-
       <div class="figure">
         <img
-          src="https://private-user-images.githubusercontent.com/62850091/452808828-0be9e034-6cd2-4965-bfc4-ec6589d11abd.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTc3OTA1ODcsIm5iZiI6MTc1Nzc5MDI4NywicGF0aCI6Ii82Mjg1MDA5MS80NTI4MDg4MjgtMGJlOWUwMzQtNmNkMi00OTY1LWJmYzQtZWM2NTg5ZDExYWJkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA5MTMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwOTEzVDE5MDQ0N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ1OTAzNjZlYjkyMDQ1NTcyN2E1ZmFlMzEwMmZhZGZiMThiNGE3M2I0ZjE3MjkzMDdmYjFkMjA2OWU0ZmY5YWImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.qKl40F6gTpzBOzqVG0F1qeDlc101i3BOliETFjLrvR8"
           alt="A screenshot of the Wireshark logs capturing and parsing syslog packets from the Pico W"
+          src="https://private-user-images.githubusercontent.com/62850091/452808828-0be9e034-6cd2-4965-bfc4-ec6589d11abd.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTc3OTA1ODcsIm5iZiI6MTc1Nzc5MDI4NywicGF0aCI6Ii82Mjg1MDA5MS80NTI4MDg4MjgtMGJlOWUwMzQtNmNkMi00OTY1LWJmYzQtZWM2NTg5ZDExYWJkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA5MTMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwOTEzVDE5MDQ0N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ1OTAzNjZlYjkyMDQ1NTcyN2E1ZmFlMzEwMmZhZGZiMThiNGE3M2I0ZjE3MjkzMDdmYjFkMjA2OWU0ZmY5YWImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.qKl40F6gTpzBOzqVG0F1qeDlc101i3BOliETFjLrvR8"
           width="100%"
         />
-        <p>A screenshot of the Wireshark logs capturing and parsing syslog packets from the Pico W</p>
+        <p>
+          A screenshot of the Wireshark logs capturing and parsing syslog
+          packets from the Pico W
+        </p>
       </div>
-
       <p>
-        The <code>syslogd</code> implementation is pretty rudimentary as it stands, but it is good enough to receive
-        syslog data over the network from a host device, which is sufficient for the use case I had. Maybe in the future
-        if I do anything more complicated with network devices, I'll improve the implementation to become closer to the
-        manpages. Until then, that's for other contributors to work on if they need it!
+        The <code>syslogd</code> implementation is pretty rudimentary as it
+        stands, but it is good enough to receive syslog data over the network
+        from a host device, which is sufficient for the use case I had. Maybe in
+        the future if I do anything more complicated with network devices, I'll
+        improve the implementation to become closer to the manpages. Until then,
+        that's for other contributors to work on if they need it!
       </p>
     </main>
   </body>
