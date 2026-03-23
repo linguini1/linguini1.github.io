@@ -16,6 +16,26 @@
   </language>
   <item>
    <title>
+    Language Learning with FOSS
+   </title>
+   <author>
+    Matteo Golin
+   </author>
+   <link>
+    https://linguini1.github.io/blog/2026/03/23/language-learning-with-foss.html
+   </link>
+   <description>
+    Recently I started to get back into language learning, as I wanted to
+        learn how to type properly using a Cyrillic keyboard. My hope was that
+        making it easier to write content in Russian would help me improve
+        faster. Then...
+   </description>
+   <pubDate>
+    Mon, 23 Mar 2026 00:00:00
+   </pubDate>
+  </item>
+  <item>
+   <title>
     Implementing RFC5424 for NuttX
    </title>
    <author>
@@ -25,10 +45,11 @@
     https://linguini1.github.io/blog/2025/09/13/syslog-rfc5424.html
    </link>
    <description>
-    Remember in my blog post about my favourite QNX feature I mentioned that I
-        wanted some way to have a syslog sink that wrote log messages to the network? Well, I did my
-        research after that blog post and happened across RFC5424,
- ...
+    Remember in
+        my blog post about my favourite QNX feature
+        I mentioned that I wanted some way to have a syslog sink
+        that wrote log messages to the network? Well, I did my research after
+        that blog post and happened a...
    </description>
    <pubDate>
     Sat, 13 Sep 2025 00:00:00
