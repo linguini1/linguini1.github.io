@@ -96,6 +96,12 @@ const THEMES = [
     light: "#eae6d6",
     dark: "#097941",
   },
+  {
+    name: "Bitbee",
+    link: "https://lospec.com/palette-list/bitbee",
+    light: "#cfab4a",
+    dark: "#292b30",
+  },
 ];
 
 function get_dark_mode() {
